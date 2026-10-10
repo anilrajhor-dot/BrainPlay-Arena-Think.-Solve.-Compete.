@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-contrast="false" data-motion="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<title>BrainPlay Arena — Think. Solve. Compete.</title>
+<style>
+:root{--bg:#0e1020;--bg2:#171a33;--card:#1d2142;--card2:#272c58;--ink:#f3f4ff;--mute:#b3b9de;--line:#383e74;--accent:#8b6cff;--a2:#00d1ff;--a3:#ff5fa8;--a4:#a3e635;--a5:#ffb020;--ok:#3ddc97;--bad:#ff7b7b;--r:16px;--shadow:0 8px 24px rgba(0,0,0,.35);--font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+[data-theme=light]{--bg:#f4f5ff;--bg2:#e9ebff;--card:#ffffff;--card2:#eef0ff;--ink:#14163a;--mute:#4d5285;--line:#c6cbf3;--accent:#6a43f5;--a2:#007fa8;--a3:#d6247f;--a4:#4d7c0f;--a5:#b36b00;--ok:#13804f;--bad:#c62828;--shadow:0 6px 18px rgba(40,40,100,.14)}
+[data-contrast=true][data-theme=dark]{--bg:#000;--bg2:#000;--card:#0a0a0a;--card2:#161616;--ink:#fff;--mute:#fff;--line:#fff;--accent:#b9a6ff;--a2:#4fe3ff;--ok:#5dffb0;--bad:#ff9a9a}
+[data-contrast=true][data-theme=light]{--bg:#fff;--bg2:#fff;--card:#fff;--card2:#f2f2f2;--ink:#000;--mute:#000;--line:#000;--accent:#3a14c9;--a2:#00566f;--ok:#005a30;--bad:#9b0000}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:radial-gradient(1200px 600px at 10% -10%,color-mix(in srgb,var(--accent) 22%,transparent),transparent),radial-gradient(900px 500px at 100% 0,color-mix(in srgb,var(--a3) 14%,transparent),transparent),var(--bg);color:var(--ink);font:16px/1.5 var(--font);min-height:100vh}
+h1,h2,h3{line-height:1.2;margin:.2em 0 .4em}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--a2);outline-offset:2px;border-radius:6px}
+.sr{position:absolute;left:-9999px}
+#top{position:sticky;top:0;z-index:20;display:flex;gap:8px;align-items:center;padding:8px 12px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+#top .brand{font-weight:800;letter-spacing:.2px;margin-right:auto;white-space:nowrap;min-width:0;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;font-size:.95rem}
+#top .btn{padding:6px 10px;flex:0 0 auto}
+@media(max-width:420px){#top{gap:5px;padding:8px}#top .brand{font-size:.85rem}}
+#top .brand span{background:linear-gradient(90deg,var(--accent),var(--a2),var(--a3));-webkit-background-clip:text;background-clip:text;color:transparent}
+.btn{min-height:44px;min-width:44px;padding:8px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card2);cursor:pointer;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:transform .12s,background .2s}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn:active:not(:disabled){transform:scale(.97)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.primary{background:linear-gradient(135deg,var(--accent),var(--a3));border-color:transparent;color:#fff}
+.btn.good{background:var(--ok);color:#06210f;border-color:transparent}
+.btn.ghost{background:transparent}
+.btn.sm{min-height:38px;padding:4px 10px;font-size:.9rem}
+.btn.sel{outline:3px solid var(--a2)}
+#top .btn .lbl{display:none}
+@media(min-width:620px){#top .btn .lbl{display:inline}}
+#view{max-width:1100px;margin:0 auto;padding:16px 14px 80px;outline:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:14px}
+.g-games{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.g-2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.hero{padding:20px 4px 6px}
+.hero h1{font-size:clamp(1.7rem,6vw,2.6rem);margin:0}
+.hero p{color:var(--mute);margin:.3em 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{padding:4px 12px;border-radius:99px;background:var(--card2);border:1px solid var(--line);font-size:.9rem;white-space:nowrap}
+.chip.ok{border-color:var(--ok);color:var(--ok)}
+.gcard{position:relative;overflow:hidden;display:flex;flex-direction:column;gap:8px;min-height:230px}
+.gcard .art{position:absolute;inset:0 0 auto 0;height:96px;opacity:.95}
+.gcard .emo{position:relative;font-size:2.6rem;margin-top:0;height:80px;display:flex;align-items:center}
+.gcard h3{margin:.2em 0 0}
+.gcard p{margin:0;color:var(--mute);font-size:.95rem;flex:1}
+.g1 .art{background:linear-gradient(135deg,#5b21b6,#ec4899)}
+.g2 .art{background:linear-gradient(135deg,#0e7490,#22d3ee 60%,#a3e635)}
+.g3 .art{background:conic-gradient(from 200deg at 30% 60%,#f59e0b,#ef4444,#8b5cf6,#f59e0b)}
+.g4 .art{background:repeating-linear-gradient(45deg,#1d4ed8 0 14px,#2563eb 14px 28px)}
+.g5 .art{background:linear-gradient(135deg,#be123c,#f97316)}
+.art::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(255,255,255,.35),transparent 45%)}
+.dots{display:inline-flex;gap:4px;align-items:center;font-size:.85rem;color:var(--mute)}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line);display:inline-block}
+.dots i.on{background:var(--a5)}
+.sect{margin:26px 0 10px;font-size:1.25rem}
+table.stats{width:100%;border-collapse:collapse;font-size:.95rem}
+table.stats th,table.stats td{padding:8px 6px;text-align:left;border-bottom:1px solid var(--line)}
+table.stats th{color:var(--mute);font-weight:600}
+.ach{display:flex;gap:10px;align-items:center;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card)}
+.ach.locked{opacity:.55;filter:grayscale(.8)}
+.ach .ic{font-size:1.8rem}
+.ach small{color:var(--mute);display:block}
+.badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:.78rem;font-weight:700;color:#fff}
+.badge.b1{background:#15803d}.badge.b2{background:#b45309}.badge.b3{background:#b91c1c}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row.sp{justify-content:space-between}
+.mute{color:var(--mute)}
+.lvgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:8px}
+.lv{min-height:52px;position:relative}
+.lv small{position:absolute;top:2px;right:5px;font-size:.7rem}
+.fb{min-height:1.6em;font-weight:600;margin:6px 0}
+.fb.ok{color:var(--ok)}.fb.bad{color:var(--bad)}
+.timer{display:inline-flex;gap:4px;padding:4px 12px;border-radius:99px;background:var(--card2);border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.timer.expired{border-color:var(--a5)}
+#toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:60;width:min(92vw,420px)}
+.toast{background:var(--card2);border:1px solid var(--accent);padding:10px 14px;border-radius:12px;box-shadow:var(--shadow);animation:pop .3s}
+@keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+#modal .modal-back{position:fixed;inset:0;background:rgba(5,6,20,.7);display:flex;align-items:center;justify-content:center;padding:14px;z-index:50;overflow:auto}
+.modal-box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;max-width:520px;width:100%;max-height:92vh;overflow:auto;box-shadow:var(--shadow);animation:pop .25s}
+.modal-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;justify-content:flex-end}
+.big-emo{font-size:3rem;text-align:center;animation:bounce .8s}
+@keyframes bounce{0%{transform:scale(.4)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+.field{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}
+select,input[type=text],input[type=number]{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-height:44px}
+input[type=checkbox]{width:26px;height:26px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+/* Detective */
+.suspect{cursor:pointer;text-align:left;display:block;width:100%;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:12px}
+.suspect.sel{border-color:var(--a3);background:color-mix(in srgb,var(--a3) 14%,var(--card))}
+.suspect.out{opacity:.5}
+.suspect .nm{font-weight:700}
+.clue{border:1px dashed var(--line);border-radius:12px;padding:10px;background:var(--card)}
+.clue.open{border-style:solid;border-color:var(--a2)}
+.clue.pin{box-shadow:0 0 0 3px var(--a5)}
+.tl{position:relative;height:26px;background:var(--card2);border-radius:8px;margin:4px 0}
+.tl .win{position:absolute;top:0;bottom:0;background:color-mix(in srgb,var(--bad) 35%,transparent);border-left:2px solid var(--bad);border-right:2px solid var(--bad)}
+.tl .bar{position:absolute;top:5px;bottom:5px;border-radius:6px;background:var(--a2);opacity:.9}
+.floor{display:flex;gap:4px;margin:8px 0}
+.floor div{flex:1;text-align:center;padding:8px 2px;border-radius:8px;background:var(--card2);border:1px solid var(--line);font-size:.8rem}
+.floor div.scene{border-color:var(--bad);font-weight:700}
+/* Escape */
+.inv{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
+.inv .item{background:var(--card2);border:1px solid var(--a5);border-radius:10px;padding:4px 10px}
+.dials{display:flex;gap:10px;justify-content:center;margin:12px 0}
+.dial{display:flex;flex-direction:column;align-items:center;gap:4px}
+.dial .v{width:56px;height:62px;border-radius:12px;background:#000;color:#7dffb0;font:700 2rem monospace;display:flex;align-items:center;justify-content:center;border:2px solid var(--line)}
+.sw-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.sw{width:64px;height:92px;border-radius:14px;border:2px solid var(--line);background:var(--card2);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:6px 0;font-weight:700}
+.sw .lev{width:18px;height:40px;border-radius:9px;background:var(--mute);transition:transform .2s}
+.sw[aria-pressed=true]{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,var(--card2))}
+.sw[aria-pressed=true] .lev{background:var(--ok);transform:translateY(-6px)}
+.sw[aria-pressed=false] .lev{transform:translateY(6px)}
+.ring{position:relative;width:260px;height:260px;margin:10px auto}
+.ring .sym{position:absolute;width:56px;height:56px;margin:-28px 0 0 -28px;font-size:1.6rem;border-radius:50%}
+.seq{display:flex;gap:8px;justify-content:center;min-height:48px;font-size:1.8rem}
+.tiles{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.tile{min-width:56px;height:56px;border-radius:12px;background:var(--card2);border:2px solid var(--line);display:flex;align-items:center;justify-content:center;font:700 1.3rem monospace;padding:0 8px}
+.shelves{display:grid;gap:8px;margin:8px 0}
+.shelf{display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;border:1px solid var(--line);background:var(--card2)}
+.shelf b{min-width:70px}
+.wheel{font:600 1.1rem monospace;text-align:center;overflow-x:auto;white-space:nowrap;padding:6px}
+.keypad{display:grid;grid-template-columns:repeat(3,64px);gap:8px;justify-content:center}
+.keypad .btn{height:56px;font-size:1.3rem}
+.disp{font:700 1.8rem monospace;letter-spacing:6px;text-align:center;background:#000;color:#7dffb0;border-radius:10px;padding:8px;min-height:52px;margin:8px auto;max-width:320px}
+/* Shape */
+.play{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:800px){.play.two{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}}
+.board{width:100%;max-width:520px;margin:0 auto;display:block;touch-action:none;user-select:none;-webkit-user-select:none}
+.board .cellbg{fill:var(--card2);stroke:var(--line);stroke-width:1}
+.board .cellbg:focus{outline:none;stroke:var(--a2);stroke-width:3}
+.tray{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start}
+.pc{background:var(--card2);border:2px solid var(--line);border-radius:12px;padding:6px;cursor:grab;touch-action:none;min-width:56px;min-height:56px;display:flex;align-items:center;justify-content:center}
+.pc.sel{border-color:var(--a2);box-shadow:0 0 0 3px color-mix(in srgb,var(--a2) 40%,transparent)}
+.pc.used{opacity:.35}
+.ghost-drag{position:fixed;pointer-events:none;z-index:70;opacity:.85;transform:translate(-50%,-50%)}
+.symgrid{display:grid;gap:3px;margin:0 auto;max-width:420px;position:relative}
+.sc{aspect-ratio:1;border-radius:8px;border:2px solid var(--line);background:var(--card2);cursor:pointer;padding:0;min-height:32px}
+.sc.lock{cursor:default;border-color:var(--mute)}
+.sc.c1{background:var(--a2)}.sc.c2{background:var(--a3)}.sc.c3{background:var(--a5)}
+.sc.err{outline:3px solid var(--bad)}
+.sc.axisR{border-right:4px dashed var(--a5)}.sc.axisB{border-bottom:4px dashed var(--a5)}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:10px}
+.opt{background:var(--card2);border:2px solid var(--line);border-radius:12px;padding:6px;cursor:pointer;min-height:90px;display:flex;align-items:center;justify-content:center}
+.opt:hover{border-color:var(--a2)}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.winpulse{animation:bounce .6s}
+/* Logic */
+.lever{min-height:92px;width:100%;border-radius:14px;border:2px solid var(--line);background:var(--card2);cursor:pointer;display:flex;flex-direction:column;gap:4px;align-items:center;justify-content:center;padding:8px}
+.lever .lamp{font-size:1.8rem}
+.lever.flash{border-color:var(--a5);box-shadow:0 0 0 3px color-mix(in srgb,var(--a5) 40%,transparent)}
+.lever.locked{opacity:.65;border-style:dashed}
+.lever.hint{outline:3px solid var(--a4)}
+.log{max-height:150px;overflow:auto;font-size:.9rem;color:var(--mute);padding-left:18px;margin:6px 0}
+.wire{stroke:var(--line);stroke-width:3;fill:none}
+.wire.on{stroke:var(--a4)}
+.gate{fill:var(--card2);stroke:var(--accent);stroke-width:2}
+.svgtxt{fill:var(--ink);font:600 12px var(--font);text-anchor:middle;dominant-baseline:middle}
+/* Battle */
+.bq{font-size:1.25rem;font-weight:700;margin:8px 0}
+.bopts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.bopts .btn{min-height:58px;font-size:1.1rem}
+.score{display:flex;gap:10px;justify-content:space-around;text-align:center}
+.score .p{flex:1;padding:10px;border-radius:14px;border:2px solid var(--line);background:var(--card)}
+.score .p.turn{border-color:var(--a2);box-shadow:0 0 0 3px color-mix(in srgb,var(--a2) 35%,transparent)}
+.oddgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-width:360px;margin:8px auto}
+.oddgrid .btn{font-size:1.6rem;min-height:56px;padding:0}
+[data-motion=reduce] *,[data-motion=reduce] *::before,[data-motion=reduce] *::after{animation:none!important;transition:none!important}
+@media (prefers-reduced-motion:reduce){[data-motion=auto] *,[data-motion=auto] *::before,[data-motion=auto] *::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<a class="sr" href="#view">Skip to content</a>
+<header id="top">
+  <div class="brand">🧠 <span>BrainPlay Arena</span></div>
+  <button class="btn" id="nb-home" aria-label="Home">🏠<span class="lbl">Home</span></button>
+  <button class="btn" id="nb-back" aria-label="Back">◀<span class="lbl">Back</span></button>
+  <button class="btn" id="nb-restart" aria-label="Restart">↻<span class="lbl">Restart</span></button>
+  <button class="btn primary" id="nb-next" aria-label="Next level"><span class="lbl">Next</span>▶</button>
+</header>
+<main id="view" tabindex="-1"></main>
+<div id="toasts" role="status" aria-live="polite"></div>
+<div id="modal" hidden></div>
+<noscript>BrainPlay Arena needs JavaScript enabled.</noscript>
+<script>
+'use strict';
+/* ===== BrainPlay Arena — core: utils, storage, scoring, achievements, navigation, home ===== */
+const BPA={games:{},ctx:{daily:null},version:'1.0.0'};
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+function h(tag,attrs,...kids){const e=document.createElement(tag);if(attrs)for(const k in attrs){const v=attrs[k];if(v==null||v===false)continue;if(k==='class')e.className=v;else if(k==='html')e.innerHTML=v;else if(k.slice(0,2)==='on'&&typeof v==='function')e.addEventListener(k.slice(2).toLowerCase(),v);else if(k==='style'&&typeof v==='object')Object.assign(e.style,v);else e.setAttribute(k,v===true?'':v);}
+  for(const kid of kids.flat(3)){if(kid==null||kid===false)continue;e.append(kid.nodeType?kid:document.createTextNode(String(kid)));}return e;}
+const SVGNS='http://www.w3.org/2000/svg';
+function sv(tag,attrs,...kids){const e=document.createElementNS(SVGNS,tag);if(attrs)for(const k in attrs){const v=attrs[k];if(v==null||v===false)continue;if(k.slice(0,2)==='on'&&typeof v==='function')e.addEventListener(k.slice(2).toLowerCase(),v);else e.setAttribute(k,v===true?'':v);}
+  for(const kid of kids.flat(3)){if(kid==null||kid===false)continue;e.append(kid.nodeType?kid:document.createTextNode(String(kid)));}return e;}
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function Rng(seed){const r=mulberry(seed>>>0);return{next:r,int:(a,b)=>a+Math.floor(r()*(b-a+1)),pick:a=>a[Math.floor(r()*a.length)],chance:p=>r()<p,
+  shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}};}
+function hashStr(s){let x=2166136261;for(let i=0;i<s.length;i++){x^=s.charCodeAt(i);x=Math.imul(x,16777619);}return x>>>0;}
+const newSeed=()=>(Math.random()*4294967296)>>>0;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const sleepless=fn=>setTimeout(fn,0);
+
+/* ---------- storage ---------- */
+const STORE_KEY='brainplay.arena.v1';
+function defaults(){return{v:1,settings:{theme:'dark',contrast:false,motion:'auto',mode:'relaxed',unlockAll:false},games:{},ach:{},daily:{last:null,streak:0,best:0,total:0},history:[],points:0,perfect:0,last:null,progress:{},names:['Player 1','Player 2']};}
+function merge(d,o){if(o&&typeof o==='object'&&!Array.isArray(o)){for(const k in o){if(k==='__proto__'||k==='constructor')continue;if(d[k]&&typeof d[k]==='object'&&!Array.isArray(d[k])&&o[k]&&typeof o[k]==='object'&&!Array.isArray(o[k]))merge(d[k],o[k]);else d[k]=o[k];}}return d;}
+let S;let storageOK=true;
+function load(){try{const raw=localStorage.getItem(STORE_KEY);if(raw){const o=JSON.parse(raw);S=merge(defaults(),o);S.v=1;return;}}catch(e){storageOK=false;}S=defaults();}
+function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(S));}catch(e){storageOK=false;}}
+function G(id){return S.games[id]||(S.games[id]={plays:0,solved:0,attempts:0,correct:0,points:0,best:0,done:{},bestBy:{},hints:0,perfect:0});}
+function applySettings(){const r=document.documentElement;r.dataset.theme=S.settings.theme==='light'?'light':'dark';r.dataset.contrast=String(!!S.settings.contrast);r.dataset.motion=['auto','reduce','full'].includes(S.settings.motion)?S.settings.motion:'auto';}
+const isChallenge=()=>S.settings.mode==='challenge';
+
+/* ---------- UI helpers ---------- */
+function toast(msg){const t=h('div',{class:'toast'},msg);$('#toasts').append(t);setTimeout(()=>t.remove(),3200);}
+function closeModal(){const m=$('#modal');m.hidden=true;m.innerHTML='';if(BPA._lastFocus&&BPA._lastFocus.focus)try{BPA._lastFocus.focus({preventScroll:true});}catch(e){}}
+function modal(title,body,buttons){BPA._lastFocus=document.activeElement;const root=$('#modal');root.innerHTML='';
+  const box=h('div',{class:'modal-box',role:'dialog','aria-modal':'true','aria-label':title},h('h2',null,title),typeof body==='string'?h('div',{html:body}):h('div',null,body),
+    h('div',{class:'modal-actions'},(buttons||[{label:'OK',cls:'primary'}]).map(b=>h('button',{class:'btn '+(b.cls||''),onClick:()=>{closeModal();b.onClick&&b.onClick();}},b.label))));
+  root.append(h('div',{class:'modal-back'},box));root.hidden=false;const f=$('.btn.primary',box)||$('.btn',box);f&&f.focus();return box;}
+BPA.confirm=(msg,yes)=>modal('Are you sure?',msg,[{label:'Cancel'},{label:'Yes',cls:'primary',onClick:yes}]);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#modal').hidden)closeModal();});
+let leaveFns=[];BPA.onLeave=fn=>leaveFns.push(fn);
+function runLeave(){const f=leaveFns;leaveFns=[];f.forEach(x=>{try{x();}catch(e){}});}
+BPA.keyHandler=null;
+document.addEventListener('keydown',e=>{if(BPA.keyHandler&&$('#modal').hidden&&!/INPUT|SELECT|TEXTAREA/.test((e.target.tagName||'')))BPA.keyHandler(e);});
+let navCfg={};
+BPA.show=function(node,nav){runLeave();BPA.keyHandler=null;const v=$('#view');v.innerHTML='';v.append(node);navCfg=nav||{};updateNav();window.scrollTo(0,0);try{v.focus({preventScroll:true});}catch(e){}};
+BPA.setNav=function(nav){navCfg=Object.assign(navCfg,nav);updateNav();};
+function updateNav(){const set=(id,fn)=>{const b=$(id);b.disabled=!fn;};set('#nb-back',navCfg.back);set('#nb-restart',navCfg.restart);set('#nb-next',navCfg.next);$('#nb-home').disabled=!!navCfg.isHome;}
+$('#nb-home').addEventListener('click',()=>BPA.home());
+$('#nb-back').addEventListener('click',()=>navCfg.back&&navCfg.back());
+$('#nb-restart').addEventListener('click',()=>navCfg.restart&&navCfg.restart());
+$('#nb-next').addEventListener('click',()=>navCfg.next&&navCfg.next());
+const fmtT=s=>{s=Math.ceil(s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
+BPA.makeTimer=function(parent,secs,onExpire){const span=h('span',null,fmtT(secs));const box=h('div',{class:'timer'},'⏱ ',span);parent.append(box);const t0=Date.now();let stopAt=null,expired=false;
+  const iv=setInterval(()=>{if(stopAt)return;const left=Math.max(0,secs-(Date.now()-t0)/1000);span.textContent=fmtT(left);if(left<=0&&!expired){expired=true;box.classList.add('expired');span.textContent='0:00 — no penalty, keep going!';onExpire&&onExpire();clearInterval(iv);}},250);
+  BPA.onLeave(()=>clearInterval(iv));
+  return{el:box,stop(){if(!stopAt){stopAt=Date.now();clearInterval(iv);}},frac(){const e=((stopAt||Date.now())-t0)/1000;return Math.max(0,1-e/secs);},expired:()=>expired};};
+BPA.result=function(o){const body=h('div',null,h('div',{class:'big-emo'},o.emoji||'🎉'),h('p',null,o.text||''),
+  o.lines&&o.lines.length?h('ul',null,o.lines.map(l=>h('li',null,l))):null,
+  o.score?h('p',null,h('b',null,'Score this run: '+o.score.total),' ',o.score.gain>0?h('span',{class:'chip ok'},'+'+o.score.gain+' to your total'):h('span',{class:'chip'},'Replay — total unchanged unless you beat your best')):null,
+  o.extraHtml?h('div',{html:o.extraHtml}):null);
+  const b=[];if(o.onMenu)b.push({label:o.menuLabel||'Menu',onClick:o.onMenu});if(o.onReplay)b.push({label:'↻ Replay',onClick:o.onReplay});if(o.onNext)b.push({label:'Next ▶',cls:'primary',onClick:o.onNext});
+  if(!b.length)b.push({label:'OK',cls:'primary'});modal(o.title||'Solved!',body,b);};
+
+/* ---------- scoring ---------- */
+const Score={
+  play(id){const g=G(id);g.plays++;save();},
+  attempt(id,ok){const g=G(id);g.attempts++;if(ok)g.correct++;save();},
+  hint(id){G(id).hints++;save();},
+  award(id,key,o){const base=[0,100,150,200][o.diff||1];const wrong=o.wrong||0,hints=o.hints||0;
+    let pts=Math.round(base*Math.max(.4,1-.12*wrong)*Math.max(.5,1-.15*hints));
+    let eff=0,tb=0;const lines=['Base '+base+' × accuracy × hint factor = '+pts];
+    if(o.par&&o.moves&&wrong<=1&&!o.revealed){eff=Math.round(base*.4*Math.min(1,o.par/o.moves));lines.push('Efficiency bonus (par '+o.par+', you used '+o.moves+'): +'+eff);}
+    if(isChallenge()&&o.timeFrac!=null&&!wrong&&!hints&&!o.revealed){tb=Math.round(base*.2*Math.max(0,o.timeFrac));lines.push('Careful-and-timely bonus: +'+tb);}
+    if(o.revealed){pts=Math.round(base*.2);eff=0;tb=0;lines.length=0;lines.push('Solution was revealed — small completion credit only.');}
+    if(wrong)lines.push(wrong+' wrong attempt'+(wrong>1?'s':'')+' reduced the base.');if(hints&&!o.revealed)lines.push(hints+' hint'+(hints>1?'s':'')+' used.');
+    const total=pts+eff+tb;const g=G(id);const was=!!g.done[key];const prev=g.bestBy[key]||0;const gain=Math.max(0,total-prev);
+    g.bestBy[key]=Math.max(prev,total);g.done[key]=1;g.solved=Object.keys(g.done).length;g.points+=gain;g.best=Math.max(g.best,total);S.points+=gain;
+    const perfect=!wrong&&!hints&&!o.revealed;if(perfect&&!was){S.perfect++;g.perfect++;}
+    let dailyBonus=0;if(BPA.ctx.daily&&BPA.ctx.daily.game===id){dailyBonus=Daily.complete();BPA.ctx.daily=null;}
+    save();Ach.check();return{total,gain,lines,perfect,dailyBonus};},
+  raw(id,key,pts){const g=G(id);g.done[key]=1;g.solved=Object.keys(g.done).length;g.points+=pts;g.best=Math.max(g.best,pts);S.points+=pts;save();Ach.check();}
+};
+/* ---------- daily ---------- */
+const dstr=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const Daily={
+  today:()=>dstr(new Date()),
+  yesterday(){const d=new Date();d.setDate(d.getDate()-1);return dstr(d);},
+  pick(){const t=this.today();const hv=hashStr('bpa-daily-'+t);return{date:t,game:['detective','escape','shape','logic'][hv%4],seed:hv};},
+  isDone(){return S.daily.last===this.today();},
+  streak(){return(S.daily.last===this.today()||S.daily.last===this.yesterday())?S.daily.streak:0;},
+  complete(){const t=this.today();if(S.daily.last===t)return 0;S.daily.streak=S.daily.last===this.yesterday()?S.daily.streak+1:1;S.daily.best=Math.max(S.daily.best,S.daily.streak);S.daily.total++;S.daily.last=t;S.points+=50;toast('🌟 Daily challenge complete! +50 bonus points');return 50;}
+};
+/* ---------- achievements ---------- */
+const sumSolved=()=>GAME_IDS.reduce((a,id)=>a+G(id).solved,0);
+const GAME_IDS=['detective','escape','shape','logic','battle'];
+const ACH=[
+ ['first','🌱','First Spark','Solve any puzzle',()=>sumSolved()>=1],
+ ['d5','🕵️','Case Cracker','Solve 5 mysteries',()=>G('detective').solved>=5],
+ ['dexp','🧠','Master Sleuth','Solve an Expert mystery',()=>Object.keys(G('detective').done).some(k=>+k.split('-')[1]>=21)],
+ ['e1','🗝️','Escape Artist','Escape from any room',()=>G('escape').solved>=1],
+ ['e5','🚪','Door Whisperer','Escape from 5 different rooms',()=>G('escape').solved>=5],
+ ['s10','🧩','Shape Shifter','Solve 10 shape levels',()=>G('shape').solved>=10],
+ ['s30','🔷','Geometry Guru','Solve all 30 shape levels',()=>G('shape').solved>=30],
+ ['l10','⚙️','Tinkerer','Solve 10 logic machines',()=>G('logic').solved>=10],
+ ['l30','🛠️','Machine Whisperer','Solve all 30 logic machines',()=>G('logic').solved>=30],
+ ['b1','⚔️','Challenger','Finish a Brain Battle match',()=>G('battle').solved>=1],
+ ['p500','⭐','Rising Star','Earn 500 points',()=>S.points>=500],
+ ['p2000','🌟','Superstar','Earn 2000 points',()=>S.points>=2000],
+ ['all','🎮','Explorer','Play all five games',()=>GAME_IDS.every(i=>G(i).plays>0)],
+ ['perf5','💎','Clean Thinker','5 perfect solves (no hints, no wrong tries)',()=>S.perfect>=5],
+ ['day1','📅','Daily Driver','Complete a daily challenge',()=>S.daily.total>=1],
+ ['str3','🔥','Warm Streak','Reach a 3-day daily streak',()=>S.daily.best>=3]
+];
+const Ach={check(){let n=0;for(const a of ACH){if(!S.ach[a[0]]&&a[4]()){S.ach[a[0]]=Date.now();toast('🏆 Achievement unlocked: '+a[2]);n++;}}if(n)save();}};
+BPA.setLast=function(game,label){S.last={game,label,t:Date.now()};save();};
+BPA.diffBadge=d=>h('span',{class:'badge b'+d},['','Beginner','Intermediate','Expert'][d]);
+BPA.level=function(id,idx,total){/* progressive unlock */return S.settings.unlockAll||idx===0||!!G(id).done[idx-1+''];};
+
+/* ---------- home ---------- */
+const GAMES=[
+ {id:'detective',name:'Mystery Detective',emoji:'🕵️',desc:'30 case files of alibis, contradictions and clues. Inspect evidence, pin the key clues, name the culprit.',diff:3,cls:'g1'},
+ {id:'escape',name:'Escape Room',emoji:'🗝️',desc:'10 adventures with 3–5 linked stages. Digits you find early open later doors.',diff:3,cls:'g2'},
+ {id:'shape',name:'Shape Shifter',emoji:'🧩',desc:'30 spatial puzzles: fit pieces into silhouettes, mirror patterns, rotate, flip and complete matrices.',diff:2,cls:'g3'},
+ {id:'logic',name:'Logic Machine',emoji:'⚙️',desc:'30 working machines of circuits, levers and sequences. Experiment, find the dependencies.',diff:3,cls:'g4'},
+ {id:'battle',name:'Brain Battle',emoji:'⚔️',desc:'Two players, one device. Pattern, logic, word, maths and visual rounds. Best of 3 or 5.',diff:2,cls:'g5'}
+];
+BPA.open=function(id,daily){BPA.ctx.daily=null;const g=BPA.games[id];if(!g)return toast('Game not available');g.open();};
+BPA.home=function(){
+  const dp=Daily.pick();const dg=GAMES.find(g=>g.id===dp.game);const done=Daily.isDone();
+  const last=S.last&&BPA.games[S.last.game]?S.last:null;const lg=last&&GAMES.find(g=>g.id===last.game);
+  const root=h('div',null,
+   h('div',{class:'hero'},h('h1',null,'BrainPlay Arena'),h('p',null,'Think. Solve. Compete.'),
+     h('div',{class:'chips'},h('span',{class:'chip'},'⭐ '+S.points+' points'),h('span',{class:'chip'},'🔥 Streak '+Daily.streak()),h('span',{class:'chip'},S.settings.mode==='challenge'?'⏱ Challenge mode':'🧘 Relaxed mode'),!storageOK?h('span',{class:'chip'},'⚠️ Progress cannot be saved in this browser'):null)),
+   h('div',{class:'grid g-2'},
+     h('div',{class:'card'},h('h3',null,'🌟 Daily Challenge'),h('p',{class:'mute'},"Today: "+dg.emoji+' '+dg.name+' — a fresh puzzle for everyone today.'),
+       h('p',{class:'mute'},'Best streak: '+S.daily.best+' • Completed: '+S.daily.total+' • Missing a day never costs you points.'),
+       h('button',{class:'btn primary',id:'daily-btn',onClick:()=>{BPA.games[dp.game].startDaily(dp);}},done?'✓ Done today — play again':'Start daily challenge')),
+     h('div',{class:'card'},h('h3',null,'▶ Continue Playing'),last?h('p',{class:'mute'},lg.emoji+' '+lg.name+' — '+last.label):h('p',{class:'mute'},'Nothing in progress yet. Pick a game below!'),
+       h('button',{class:'btn primary',id:'continue-btn',disabled:!last,onClick:()=>{BPA.ctx.daily=null;const g=BPA.games[last.game];(g.resume||g.open)();}},'Continue'))),
+   h('h2',{class:'sect'},'Choose your game'),
+   h('div',{class:'grid g-games'},GAMES.map(g=>h('div',{class:'card gcard '+g.cls},h('div',{class:'art'}),h('div',{class:'emo','aria-hidden':'true'},g.emoji),h('h3',null,g.name),h('p',null,g.desc),
+     h('div',{class:'row sp'},h('span',{class:'dots','aria-label':'Difficulty '+g.diff+' of 3'},'Difficulty ',[1,2,3].map(i=>h('i',{class:i<=g.diff?'on':''}))),
+       h('button',{class:'btn primary','data-play':g.id,onClick:()=>BPA.open(g.id)},'▶ Play'))))),
+   h('h2',{class:'sect'},'📊 Personal bests & statistics'),
+   h('div',{class:'card',style:{overflowX:'auto'}},h('table',{class:'stats'},h('thead',null,h('tr',null,['Game','Plays','Solved','Best score','Points','Accuracy'].map(x=>h('th',null,x)))),
+     h('tbody',null,GAMES.map(g=>{const s=G(g.id);return h('tr',null,h('td',null,g.emoji+' '+g.name),h('td',null,s.plays),h('td',null,s.solved),h('td',null,s.best),h('td',null,s.points),h('td',null,s.attempts?Math.round(100*s.correct/s.attempts)+'%':'—'));})))),
+   h('h2',{class:'sect'},'🏆 Achievements ('+ACH.filter(a=>S.ach[a[0]]).length+'/'+ACH.length+')'),
+   h('div',{class:'grid g-2'},ACH.map(a=>h('div',{class:'ach'+(S.ach[a[0]]?'':' locked')},h('div',{class:'ic'},S.ach[a[0]]?a[1]:'🔒'),h('div',null,h('b',null,a[2]),h('small',null,a[3]))))),
+   h('div',{class:'row',style:{marginTop:'24px'}},h('button',{class:'btn',id:'btn-settings',onClick:BPA.settings},'⚙️ Settings'),h('button',{class:'btn',id:'btn-about',onClick:BPA.about},'ℹ️ About')));
+  BPA.show(root,{isHome:true});
+};
+BPA.settings=function(){
+  const sel=(key,opts)=>h('select',{onChange:e=>{S.settings[key]=e.target.value;save();applySettings();}},opts.map(o=>{const op=h('option',{value:o[0]},o[1]);if(S.settings[key]===o[0])op.selected=true;return op;}));
+  const chk=(key)=>{const c=h('input',{type:'checkbox','aria-label':key,onChange:e=>{S.settings[key]=e.target.checked;save();applySettings();}});c.checked=!!S.settings[key];return c;};
+  const root=h('div',null,h('h1',null,'⚙️ Settings'),h('div',{class:'card'},
+    h('div',{class:'field'},h('label',null,'Theme'),sel('theme',[['dark','Dark'],['light','Light']])),
+    h('div',{class:'field'},h('label',null,'High contrast'),chk('contrast')),
+    h('div',{class:'field'},h('label',null,'Animations'),sel('motion',[['auto','Follow my device'],['reduce','Reduce motion'],['full','Allow animations']])),
+    h('div',{class:'field'},h('div',null,h('b',null,'Play mode'),h('div',{class:'mute'},'Relaxed has no timers. Challenge adds gentle optional timers — running out never ends a game.')),sel('mode',[['relaxed','Relaxed (no timers)'],['challenge','Challenge (timers)']])),
+    h('div',{class:'field'},h('div',null,h('b',null,'Open all levels'),h('div',{class:'mute'},'Skip level locking in Shape Shifter and Logic Machine.')),chk('unlockAll')),
+    h('div',{class:'field'},h('div',null,h('b',null,'Reset all progress'),h('div',{class:'mute'},'Deletes scores, stats and achievements on this device.')),h('button',{class:'btn',id:'btn-reset',onClick:()=>BPA.confirm('This permanently deletes all BrainPlay Arena progress stored on this device.',()=>{const st=S.settings;S=defaults();S.settings=st;save();toast('Progress cleared');BPA.settings();})},'Reset'))));
+  BPA.show(root,{back:BPA.home});};
+BPA.about=function(){BPA.show(h('div',null,h('h1',null,'ℹ️ About BrainPlay Arena'),h('div',{class:'card'},
+  h('p',null,'BrainPlay Arena v'+BPA.version+' is a single-file brain-games collection: Mystery Detective, Escape Room, Shape Shifter, Logic Machine and Brain Battle.'),
+  h('p',null,'Everything runs on your device. There are no accounts, no analytics and no network requests — progress is stored only in your browser\'s local storage, so it also works offline.'),
+  h('p',null,'Scoring rewards careful thinking: wrong guesses and hints reduce the base score, efficient solutions earn bonuses, and speed alone never does. Replays never inflate your total — only beating your best adds points.'),
+  h('p',{class:'mute'},'Tips: use Tab/Enter or tap to play everywhere. In Shape Shifter press R to rotate and F to flip the selected piece.'))),{back:BPA.home});};
+function boot(){load();applySettings();Ach.check();BPA.home();}
+/* ===== Game 1: Mystery Detective ===== */
+(function(){
+const PEOPLE=[['Asha','👩‍🎤'],['Ben','🧑‍🔧'],['Chloe','👩‍🔬'],['Dev','🧑‍🎨'],['Elena','👩‍🍳'],['Farid','🧔'],['Gia','👩‍🚀'],['Hugo','🧑‍🏫'],['Ivy','👧'],['Jon','🧑‍💼'],['Kira','🧑‍🎤'],['Leo','🧑‍🚒']];
+const FLAVORS=[
+ {n:'Grand Museum',e:'🏛️',item:'the Jade Falcon',crime:'vanished from the Jade Gallery',scene:'Jade Gallery',places:['Café','Gift Shop','Library','Garden Court','Roof Terrace','Workshop','Cloakroom'],gates:[['Staff corridor door','Badge holders'],['Alarm panel','People who know the code'],['Display case lock','Key holders'],['Service lift','Authorised operators'],['Security office hatch','People with hatch access']]},
+ {n:"Founders' School",e:'🏫',item:'the Golden Trophy',crime:'disappeared from the Trophy Hall',scene:'Trophy Hall',places:['Gym','Science Lab','Canteen','Library','Art Room','Playground','Staffroom'],gates:[['Staffroom door','Teachers with a pass'],['Trophy cabinet','Key holders'],['Alarm keypad','People who know the PIN'],['Side gate','People who held a gate card'],['Janitor closet','Janitor-key holders']]},
+ {n:'Cruise Ship Aurora',e:'🚢',item:'the Captain\'s Sapphire',crime:'went missing from the Captain\'s Cabin',scene:'Captain\'s Cabin',places:['Casino','Pool Deck','Theatre','Engine Room','Galley','Library','Spa'],gates:[['Crew stairwell','Crew-card holders'],['Bridge hatch','People trained on the hatch'],['Cabin lock','Key-card holders'],['Safe dial','People who know the dial code'],['Lower deck gangway','People cleared by the purser']]},
+ {n:'Orbital Station Kepler',e:'🛰️',item:'the Sample Capsule',crime:'was taken from the Cryo Module',scene:'Cryo Module',places:['Greenhouse','Gym Ring','Lab','Galley','Observation Dome','Workshop','Airlock'],gates:[['Module hatch','Hatch-clearance crew'],['Cryo lock','Lock-key holders'],['Power breaker','Engineers'],['Tether room','People with tether training'],['Capsule rack','Rack-code holders']]},
+ {n:'Silverlight Studios',e:'🎬',item:'the Master Reel',crime:'was stolen from the Vault Room',scene:'Vault Room',places:['Backlot','Costume Shop','Soundstage','Editing Suite','Canteen','Props Store','Green Room'],gates:[['Studio back door','Crew-pass holders'],['Vault grille','Grille-key holders'],['Alarm box','People who know the code'],['Archive lift','Authorised operators'],['Reel safe','Safe-combination holders']]},
+ {n:'Hotel Meridian',e:'🏨',item:'the Penthouse Pearl',crime:'was taken from the Penthouse Suite',scene:'Penthouse Suite',places:['Lobby Bar','Spa','Kitchen','Pool','Ballroom','Laundry','Garden'],gates:[['Staff lift','Staff-card holders'],['Penthouse corridor','Floor-key holders'],['Suite lock','Master-key holders'],['Jewel safe','People who know the safe code'],['Fire stairs door','People with stairs access']]}
+];
+const TITLES=[['The Falcon Slips Away','Whispers in the Gallery','Footprints by the Fountain','Locks Within Locks','Rooms of the Rotunda'],
+ ['The Missing Trophy','The Principal\'s Riddle','Chalk Dust Evidence','Keys to the Staffroom','Corridor of Secrets'],
+ ['Midnight Cruise Caper','The Captain\'s Dilemma','Deck Seven Clues','Gangway Gates','Cabins in a Row'],
+ ['Orbit Alibis','The Airlock Accusation','Zero-G Footprints','Hatch After Hatch','Module Mix-up'],
+ ['Cut! The Missing Reel','Script Doctor Confessions','Backlot Boots','Set Door Sequence','Soundstage Shuffle'],
+ ['The Penthouse Pearl','Concierge Contradictions','Lobby Lookouts','Elevator Access','Suite Switch']];
+const KINDS=['Alibi timeline','Who is lying?','Evidence match','Access chain','Corridor logic'];
+const SOURCES=['Camera footage','Door log','Till receipt','Badge swipe','Guest book','Phone-call log','Lift log'];
+const mm=t=>String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
+const CASES=[];for(let i=0;i<30;i++){const f=Math.floor(i/5),k=i%5;CASES.push({id:'case-'+(i+1),num:i+1,flavor:f,kind:k,diff:f<2?1:f<4?2:3,title:TITLES[f][k]});}
+const cs=n=>({beginner:4,intermediate:5,expert:6}[n]);
+function pickSuspects(rng,n){return rng.shuffle(PEOPLE).slice(0,n).map(p=>({name:p[0],emoji:p[1]}));}
+const listNames=(sus,idxs)=>idxs.map(i=>sus[i].name).join(', ');
+
+/* ---- Kind 0: alibi timeline ---- */
+function genAlibi(rng,fl,diff){const n=diff+3;const sus=pickSuspects(rng,n);const culprit=rng.int(0,n-1);
+  const len=[0,20,25,30][diff];let a=rng.int(19*60,21*60+30);a-=a%5;const b=a+len;const clues=[],timeline=[];let id=0;
+  const places=rng.shuffle(fl.places);
+  const rec=(who,place,from,to,key)=>{const src=rng.pick(SOURCES);const c={id:'k'+(id++),title:src+' — '+sus[who].name,text:src+' places '+sus[who].name+' at the '+place+' from '+mm(from)+' to '+mm(to)+'.',key:!!key,suspect:who};clues.push(c);timeline.push({who,from,to,place});return c;};
+  const sayings=[];
+  sus.forEach((s,i)=>{const place=places[i%places.length];
+    if(i===culprit){const g1=a+rng.int(2,Math.max(3,len-10));const g2=Math.min(b,g1+rng.int(6,8));
+      rec(i,place,a-rng.int(10,25),g1,true);rec(i,place,g2,b+rng.int(8,20),true);s.cleared=null;s.gap=[g1,g2];s.claim=place;s.statement='"I was in the '+place+' all evening — ask anyone."';}
+    else{const lie=diff>1&&rng.chance(.45);const real=place;
+      if(diff===1){rec(i,real,a-rng.int(5,15),b+rng.int(5,15));}
+      else{const m=a+rng.int(6,len-6);rec(i,real,a-rng.int(5,12),m+3);rec(i,real,m-3,b+rng.int(4,12));}
+      if(lie){const fake=places[(i+3)%places.length]===real?'Cloakroom':places[(i+3)%places.length];s.statement='"I was in the '+fake+' all evening."';s.liar=true;}else s.statement='"I was in the '+real+' all evening."';
+      s.cleared=sus[i].name+' is covered for the whole window ('+mm(a)+'–'+mm(b)+') by the records at the '+real+'.'+(s.liar?' (Their own statement was wrong — they lied about where they were — but the records still clear them.)':'');}
+  });
+  const order=rng.shuffle(clues);
+  const exp='The '+fl.item+' '+fl.crime.replace('vanished','vanished').replace(/^/,'')+' between '+mm(a)+' and '+mm(b)+'. '+sus.filter((_,i)=>i!==culprit).map(s=>s.name).join(', ')+' each have records covering that entire window, so none could have been at the '+fl.scene+'. Only '+sus[culprit].name+' has a gap, from '+mm(sus[culprit].gap[0])+' to '+mm(sus[culprit].gap[1])+', in which nobody can account for them — and their statement claims they never left the '+sus[culprit].claim+'.';
+  const verify=()=>sus.filter((_,i)=>{for(let t=a;t<b;t++){if(!timeline.some(r=>r.who===i&&r.from<=t&&t<r.to))return true;}return false;}).length;
+  return{verify,suspects:sus,clues:order,answer:culprit,explanation:exp,window:[a,b],timeline,
+    story:fl.item[0].toUpperCase()+fl.item.slice(1)+' '+fl.crime+' at some point between '+mm(a)+' and '+mm(b)+'. Cross-check every record against that window.',
+    hints:['Only the crime window ('+mm(a)+'–'+mm(b)+') matters. For each suspect ask: do the records cover all of it?','Combine the records for each person — look for someone whose records leave a gap inside the window.','Eliminate one innocent: '+(sus.find((s,i)=>i!==culprit).cleared)]};}
+
+/* ---- Kind 1: who is lying (culprit lies, others truthful) ---- */
+function genLiar(rng,fl,diff){const n=diff+3;const sus=pickSuspects(rng,n);
+  const truth=(st,c)=>st.t==='is'?c===st.p:st.t==='not'?c!==st.p:(c===st.p||c===st.q);
+  let sts,cands;for(let tries=0;tries<2000;tries++){sts=sus.map((_,i)=>{const t=rng.pick(diff===1?['is','not','either']:['is','not','either','is','not']);let p=rng.int(0,n-1),q=rng.int(0,n-1);
+      if(t==='is'||t==='either'){if(p===i)p=(p+1)%n;}if(t==='either'){while(q===p||q===i)q=rng.int(0,n-1);}return{t,p,q,who:i};});
+    cands=[];for(let c=0;c<n;c++){let ok=true;for(let i=0;i<n;i++){const tv=truth(sts[i],c);if(i===c?tv:!tv){ok=false;break;}}if(ok)cands.push(c);}
+    if(cands.length===1)break;}
+  if(cands.length!==1)return genLiar(Rng(rng.int(1,1e9)),fl,diff);
+  const culprit=cands[0];const nm=i=>sus[i].name;
+  sus.forEach((s,i)=>{const st=sts[i];let txt;
+    if(st.t==='is')txt=(diff>1&&rng.chance(.5))?nm(st.p)+' is the one lying.':'It was '+nm(st.p)+'.';
+    else if(st.t==='not')txt=(diff>1&&rng.chance(.5))?(st.p===i?'I am telling the truth.':nm(st.p)+' is telling the truth.'):(st.p===i?'It was not me.':'It was not '+nm(st.p)+'.');
+    else txt='It was either '+nm(st.p)+' or '+nm(st.q)+'.';
+    st.txt=txt;s.statement='"'+txt+'"';});
+  // elimination reasons
+  const why={};const eliminators=new Set();
+  for(let c=0;c<n;c++){if(c===culprit)continue;let r=null;for(let i=0;i<n&&!r;i++){const tv=truth(sts[i],c);if(i!==c&&!tv){r='If '+nm(c)+' were guilty, '+nm(i)+'\'s statement ("'+sts[i].txt+'") would be false — but only the culprit lies.';eliminators.add(i);}else if(i===c&&tv){r='If '+nm(c)+' were guilty, their own statement ("'+sts[i].txt+'") would be true — but the culprit\'s statement is false.';eliminators.add(i);}}why[c]=r;}
+  eliminators.add(culprit);
+  const clues=sus.map((s,i)=>({id:'k'+i,title:'Statement — '+s.name,text:nm(i)+' says: "'+sts[i].txt+'"',key:eliminators.has(i),suspect:i}));
+  clues.unshift({id:'rule',title:'The Rule (from the investigator)',text:'Everyone except the guilty person is telling the truth. The guilty person\'s statement is false.',key:true});
+  sus.forEach((s,i)=>s.cleared=i===culprit?null:why[i]);
+  const exp='Test each suspect as the culprit. '+sus.filter((_,i)=>i!==culprit).map((s,i2)=>'• '+s.cleared).join(' ')+' Only with '+nm(culprit)+' guilty is exactly one statement false — their own.';
+  const verify=()=>{let c=0;for(let x=0;x<n;x++){let ok=true;for(let i=0;i<n;i++){const tv=truth(sts[i],x);if(i===x?tv:!tv){ok=false;break;}}if(ok)c++;}return c;};
+  return{verify,suspects:sus,clues,answer:culprit,explanation:exp,story:'Everyone was questioned about who took '+fl.item+'. Remember the investigator\'s rule — then test each suspect.',
+    hints:['Assume one suspect is guilty and check every statement against the rule.','Count how many statements would be false under each assumption — the rule allows exactly one (the culprit\'s).','Eliminate one: '+sus.find((s,i)=>i!==culprit).cleared]};}
+
+/* ---- Kind 2: trait matching ---- */
+const TRAITS=[['Shoes',['sneakers','boots','sandals'],['👟','🥾','🩴']],['Handed',['left-handed','right-handed','ambidextrous'],['🫲','🫱','🙌']],['Wears',['a cap','a scarf','glasses'],['🧢','🧣','👓']],['Carries',['a coffee','a backpack','an umbrella'],['☕','🎒','☂️']]];
+function genTraits(rng,fl,diff){const n=diff+3;const sus=pickSuspects(rng,n);let prof,culprit,reveal;
+  for(let t=0;t<5000;t++){prof=[];const seen=new Set();let okp=true;for(let i=0;i<n;i++){let p;let g=0;do{p=TRAITS.map(()=>rng.int(0,2));g++;}while(seen.has(p.join())&&g<50);seen.add(p.join());prof.push(p);}
+    culprit=rng.int(0,n-1);const order=rng.shuffle([0,1,2,3]);reveal=[];
+    for(const tr of order){reveal.push(tr);const left=prof.map((p,i)=>i).filter(i=>reveal.every(r=>prof[i][r]===prof[culprit][r]));if(left.length===1)break;}
+    const left=prof.map((p,i)=>i).filter(i=>reveal.every(r=>prof[i][r]===prof[culprit][r]));
+    if(left.length===1&&reveal.length>=(diff===1?2:3))break;}
+  sus.forEach((s,i)=>{s.statement=TRAITS.map((T,ti)=>T[2][prof[i][ti]]+' '+T[0]+': '+T[1][prof[i][ti]]).join(' • ');});
+  const clueText=[(r)=>'Footprints at the '+fl.scene+' were made by '+TRAITS[0][1][prof[culprit][0]]+'.',(r)=>'The cut mark on the case shows the thief was '+TRAITS[1][1][prof[culprit][1]]+'.',(r)=>'A fibre snagged on the door matches '+TRAITS[2][1][prof[culprit][2]]+'.',(r)=>'A witness saw the thief carrying '+TRAITS[3][1][prof[culprit][3]]+'.'];
+  const clues=reveal.map((r,i)=>({id:'k'+i,title:['Footprints','Cut mark','Fibre','Witness'][r],text:clueText[r](),key:true}));
+  // add a true-but-already-implied flavour clue (not key)
+  sus.forEach((s,i)=>{if(i===culprit){s.cleared=null;return;}const r=reveal.find(r=>prof[i][r]!==prof[culprit][r]);s.cleared=s.name+' is '+TRAITS[r][1][prof[i][r]]+' (trait: '+TRAITS[r][0].toLowerCase()+'), but the evidence points to '+TRAITS[r][1][prof[culprit][r]]+'.';});
+  const exp='Each clue removes suspects whose dossier does not match. '+sus.filter((_,i)=>i!==culprit).map(s=>s.cleared).join(' ')+' Only '+sus[culprit].name+' matches every clue.';
+  const verify=()=>prof.filter(p=>reveal.every(r=>p[r]===prof[culprit][r])).length;
+  return{verify,suspects:sus,clues,answer:culprit,explanation:exp,story:'Compare the evidence from the scene with each suspect\'s dossier. Inspect every card.',
+    hints:['Match each evidence clue against the dossiers; cross out anyone who does not fit.','Start with the clue that eliminates the most suspects, then combine with the others.','Eliminate one: '+sus.find((s,i)=>i!==culprit).cleared]};}
+
+/* ---- Kind 3: access chain ---- */
+function genAccess(rng,fl,diff){const n=diff+3;const sus=pickSuspects(rng,n);const culprit=rng.int(0,n-1);const gcount=diff+2;const gates=rng.shuffle(fl.gates).slice(0,gcount);
+  let I=sus.map((_,i)=>i);const sets=[];
+  for(let k=0;k<gcount;k++){let S;const others=sus.map((_,i)=>i).filter(i=>i!==culprit);
+    if(k===gcount-1){const outside=others.filter(i=>!I.includes(i));const insideOthers=others.filter(i=>I.includes(i));const extra=rng.shuffle(outside).slice(0,rng.int(1,Math.max(1,outside.length)));S=[culprit].concat(extra);if(!extra.length&&insideOthers.length&&rng.chance(.5))S=[culprit];}
+    else{const m=rng.int(1,Math.max(1,Math.min(n-2,others.length-1)));S=[culprit].concat(rng.shuffle(others).slice(0,m));}
+    sets.push(S);I=I.filter(i=>S.includes(i));}
+  // guarantee uniqueness
+  if(I.length!==1||I[0]!==culprit){sets[gcount-1]=[culprit];I=[culprit];}
+  const clues=sets.map((S,k)=>({id:'k'+k,title:'Step '+(k+1)+' — '+gates[k][0],text:'To take '+fl.item+' the thief had to get through the '+gates[k][0].toLowerCase()+(k?' (only after step '+k+')':'')+'. '+gates[k][1]+': '+listNames(sus,S.slice().sort((x,y)=>x-y))+'.',key:true}));
+  sus.forEach((s,i)=>{if(i===culprit){s.cleared=null;s.statement='Says: "I was nowhere near the '+fl.scene+'."';return;}const k=sets.findIndex(S=>!S.includes(i));s.cleared=s.name+' is not on the list for step '+(k+1)+' ('+gates[k][0]+'), so could not have completed the chain.';s.statement='Says: "I never touched anything at the '+fl.scene+'."';});
+  const exp='Each step in the chain depends on the one before it, so the thief must appear on every list. '+sus.filter((_,i)=>i!==culprit).map(s=>s.cleared).join(' ')+' Only '+sus[culprit].name+' appears on all '+gcount+' lists.';
+  const verify=()=>sus.filter((_,i)=>sets.every(S=>S.includes(i))).length;
+  return{verify,suspects:sus,clues,answer:culprit,explanation:exp,story:'The theft needed several steps in order — each one possible only for certain people. Who could do them all?',
+    hints:['The thief must have been able to do EVERY step. Look for names that appear in all lists.','Write down who is on step 1, then keep only those who also appear on step 2, and so on.','Eliminate one: '+sus.find((s,i)=>i!==culprit).cleared]};}
+
+/* ---- Kind 4: corridor logic ---- */
+function genCorridor(rng,fl,diff){const n=diff+3;const sus=pickSuspects(rng,n);const rooms=rng.shuffle(fl.places.filter(p=>p!==fl.scene)).slice(0,n-1);const sceneIdx=rng.int(0,n-1);rooms.splice(sceneIdx,0,fl.scene);
+  const planted=rng.shuffle([...Array(n).keys()]); // planted[person]=room position
+  const perms=[];(function perm(a,k){if(k===a.length){perms.push(a.slice());return;}for(let i=k;i<a.length;i++){[a[k],a[i]]=[a[i],a[k]];perm(a,k+1);[a[k],a[i]]=[a[i],a[k]];}})([...Array(n).keys()],0);
+  const nm=i=>sus[i].name;
+  const mk=()=>{const p=rng.int(0,n-1);let q=rng.int(0,n-1);while(q===p)q=rng.int(0,n-1);const r=rng.int(0,n-1);const t=rng.int(0,4);
+    if(t===0)return{t:'in',p,r:planted[p],f:a=>a[p]===planted[p],txt:nm(p)+' was seen in the '+rooms[planted[p]]+'.'};
+    if(t===1){const rr=(r===planted[p])?(r+1)%n:r;return{t:'notin',p,r:rr,f:a=>a[p]!==rr,txt:nm(p)+' was definitely not in the '+rooms[rr]+'.'};}
+    if(t===2){if(Math.abs(planted[p]-planted[q])!==1)return null;return{t:'adj',p,q,f:a=>Math.abs(a[p]-a[q])===1,txt:nm(p)+' and '+nm(q)+' were in neighbouring rooms.'};}
+    if(t===3){if(planted[p]>=planted[q])return null;return{t:'left',p,q,f:a=>a[p]<a[q],txt:nm(p)+' was in a room further left than '+nm(q)+'.'};}
+    if(Math.abs(planted[p]-planted[q])===1)return null;return{t:'nadj',p,q,f:a=>Math.abs(a[p]-a[q])!==1,txt:nm(p)+' and '+nm(q)+' were NOT in neighbouring rooms.'};};
+  const occ=cl=>{const ps=perms.filter(a=>cl.every(c=>c.f(a)));const set=new Set(ps.map(a=>a.indexOf(sceneIdx)));return{ps,set};};
+  let cl=[];for(let g=0;g<400;g++){const c=mk();if(!c)continue;cl.push(c);if(occ(cl).set.size===1)break;}
+  if(occ(cl).set.size!==1)return genCorridor(Rng(rng.int(1,1e9)),fl,diff);
+  for(let i=cl.length-1;i>=0;i--){const t=cl.slice();t.splice(i,1);if(occ(t).set.size===1)cl=t;}
+  const info=occ(cl);const culprit=[...info.set][0];
+  const clues=cl.map((c,i)=>({id:'k'+i,title:'Witness report '+(i+1),text:c.txt,key:true}));
+  sus.forEach((s,i)=>{s.statement=i===culprit?'Says: "I was just walking the corridor."':'Says: "I was in one of the rooms, honestly."';s.cleared=null;});
+  const ex=info.ps[0];
+  sus.forEach((s,i)=>{if(i!==culprit)s.cleared=s.name+' cannot be in the '+fl.scene+': '+(info.ps.length===1?'the only room layout that fits':'every one of the '+info.ps.length+' room layouts that fit')+' all reports puts '+sus[culprit].name+' there.';});
+  const exp='Try every way of placing the suspects in the '+n+' rooms and keep only layouts that obey all reports. '+(info.ps.length===1?'Exactly one layout fits':info.ps.length+' layouts fit')+', and in all of them '+sus[culprit].name+' is in the '+fl.scene+'. Example layout (left to right): '+rooms.map((r,pos)=>r+' → '+sus[ex.indexOf(pos)].name).join('; ')+'.';
+  let fixed=null;for(let i=0;i<n;i++){if(i!==culprit&&info.ps.every(a=>a[i]===info.ps[0][i])){fixed=i;break;}}
+  const verify=()=>occ(cl).set.size;
+  return{verify,suspects:sus,clues,answer:culprit,explanation:exp,rooms,sceneIdx,story:'Everyone was in a different room along one corridor when '+fl.item+' '+fl.crime.replace(/^(vanished|was taken|was stolen|went missing|disappeared|was stolen) from/,'went missing from')+'. Who was in the '+fl.scene+'? Use the witness reports.',
+    hints:['Draw the corridor and try placing suspects in rooms; each report rules some placements out.','Start with reports that name an exact room, then use the "neighbouring" and "left of" reports.',fixed!=null?'In every valid layout, '+sus[fixed].name+' is in the '+rooms[info.ps[0][fixed]]+'. Use that to place others.':'There are '+info.ps.length+' layout(s) that fit — every one has the same person in the '+fl.scene+'.']};}
+const GEN=[genAlibi,genLiar,genTraits,genAccess,genCorridor];
+function buildCase(c,seed){const rng=Rng(seed);const fl=FLAVORS[c.flavor];const d=GEN[c.kind](rng,fl,c.diff);return Object.assign(d,{c,fl,seed});}
+BPA.detectiveGen=buildCase;BPA.detectiveCases=CASES;
+
+/* ---- UI ---- */
+const st={cur:null};
+function menu(){BPA.ctx.daily=null;st.cur=null;let filter=0;
+  const wrap=h('div',null,h('h1',null,'🕵️ Mystery Detective'),h('p',{class:'mute'},'Open a case file, inspect the evidence, pin the clues that prove your theory, then accuse. Each play shuffles names, times and statements.'),
+    h('div',{class:'tabs',role:'tablist'}),h('div',{class:'grid g-games',id:'caselist'}));
+  const tabs=$('.tabs',wrap);const list=$('#caselist',wrap);
+  const draw=()=>{tabs.innerHTML='';[['All',0],['Beginner',1],['Intermediate',2],['Expert',3]].forEach(([l,v])=>tabs.append(h('button',{class:'btn sm'+(filter===v?' sel':''),onClick:()=>{filter=v;draw();}},l)));
+    tabs.append(h('button',{class:'btn sm primary',id:'det-random',onClick:()=>{const open=CASES.filter(c=>!G('detective').done[c.id]);const c=(open.length?open:CASES)[Math.floor(Math.random()*(open.length||CASES.length))];start(c);}},'🎲 Random case'));
+    list.innerHTML='';CASES.filter(c=>!filter||c.diff===filter).forEach(c=>{const done=G('detective').done[c.id];list.append(h('button',{class:'card suspect','data-case':c.id,onClick:()=>start(c),style:{textAlign:'left'}},h('div',{class:'row sp'},h('b',null,FLAVORS[c.flavor].e+' #'+c.num+' '+c.title),done?h('span',{class:'chip ok'},'✓ '+G('detective').bestBy[c.id]):null),h('div',{class:'row'},BPA.diffBadge(c.diff),h('span',{class:'chip'},KINDS[c.kind]))));});};
+  draw();BPA.show(wrap,{back:BPA.home});}
+function start(c,seed,daily,resume){seed=seed||newSeed();BPA.ctx.daily=daily?daily:null;if(!resume)Score.play('detective');
+  const d=buildCase(c,seed);st.cur={d,c,seed,inspected:new Set(),pinned:new Set(),hints:0,wrong:0,selected:null,revealed:false,done:false,eliminated:new Set()};
+  BPA.setLast('detective','Case #'+c.num+' — '+c.title);S.progress.detective={caseId:c.id,seed};save();render();}
+function render(){const s=st.cur,d=s.d,c=s.c,fl=d.fl;
+  const root=h('div',null,h('h1',null,fl.e+' Case #'+c.num+': '+c.title),h('div',{class:'row'},BPA.diffBadge(c.diff),h('span',{class:'chip'},KINDS[c.kind]),h('span',{class:'chip',id:'det-hints'},'Hints: '+s.hints+'/3')),
+    h('div',{class:'card',style:{marginTop:'10px'}},h('p',null,d.story),h('p',{class:'mute'},'Setting: '+fl.n+'. Tap 🔍 to inspect each evidence card, 📌 to pin the ones that prove your theory, then pick a suspect and accuse.')),
+    h('h2',{class:'sect'},'🗂️ Evidence ('+d.clues.length+' cards)'),h('div',{class:'grid g-2',id:'clues'}),
+    d.timeline?h('div',{id:'tlbox'}):null,d.rooms?h('div',{id:'floor'}):null,
+    h('h2',{class:'sect'},'👥 Suspects'),h('div',{class:'grid g-2',id:'sus'}),
+    h('div',{class:'row',style:{marginTop:'14px'}},h('button',{class:'btn primary',id:'det-accuse',onClick:accuse},'⚖️ Accuse selected suspect'),h('button',{class:'btn',id:'det-hint',onClick:hint},'💡 Hint'),h('button',{class:'btn ghost',id:'det-reveal',onClick:reveal,disabled:s.hints<3},'🏳️ Reveal solution')),
+    h('div',{class:'fb',id:'det-fb','aria-live':'polite'}));
+  BPA.show(root,{back:()=>menu(),restart:()=>start(c,newSeed(),null),next:()=>nextCase()});
+  drawClues();drawSus();drawTL();}
+function drawClues(){const s=st.cur,box=$('#clues');if(!box)return;box.innerHTML='';s.d.clues.forEach(cl=>{const open=s.inspected.has(cl.id),pin=s.pinned.has(cl.id);
+  box.append(h('div',{class:'clue'+(open?' open':'')+(pin?' pin':''),'data-clue':cl.id},h('b',null,cl.title),
+    open?h('p',null,cl.text):h('p',{class:'mute'},'🔒 Not yet inspected'),
+    h('div',{class:'row'},open?null:h('button',{class:'btn sm','data-inspect':cl.id,onClick:()=>{s.inspected.add(cl.id);drawClues();drawTL();}},'🔍 Inspect'),open?h('button',{class:'btn sm'+(pin?' sel':''),'aria-pressed':pin,'data-pin':cl.id,onClick:()=>{if(pin)s.pinned.delete(cl.id);else if(s.pinned.size>=6){fb('You can pin at most 6 clues — keep only the ones that prove your case.',false);return;}else s.pinned.add(cl.id);drawClues();}},pin?'📌 Pinned':'📌 Pin as key'):null)));});}
+function drawTL(){const s=st.cur,d=s.d;if(d.rooms){const f=$('#floor');if(f){f.innerHTML='';f.append(h('h3',null,'Corridor plan (left → right)'),h('div',{class:'floor'},d.rooms.map((r,i)=>h('div',{class:i===d.sceneIdx?'scene':''},(i+1)+'. '+r))));}}
+  if(!d.timeline)return;const box=$('#tlbox');box.innerHTML='';box.append(h('h2',{class:'sect'},'⏱️ Timeline (from inspected records)'));
+  const lo=Math.min(d.window[0],...d.timeline.map(t=>t.from))-5,hi=Math.max(d.window[1],...d.timeline.map(t=>t.to))+5;const pct=t=>((t-lo)/(hi-lo)*100)+'%';
+  const insp=new Set([...s.inspected]);const card=h('div',{class:'card'});card.append(h('div',{class:'mute'},'Red band = crime window '+mm(d.window[0])+'–'+mm(d.window[1])));
+  d.suspects.forEach((sp,i)=>{const row=h('div',null,h('small',null,sp.emoji+' '+sp.name));const tl=h('div',{class:'tl'},h('div',{class:'win',style:{left:pct(d.window[0]),width:((d.window[1]-d.window[0])/(hi-lo)*100)+'%'}}));
+    d.clues.forEach(cl=>{if(cl.suspect===i&&insp.has(cl.id)){const rec=d.timeline.find(t=>cl.text.includes(mm(t.from)+' to '+mm(t.to))&&t.who===i);if(rec)tl.append(h('div',{class:'bar',title:mm(rec.from)+'–'+mm(rec.to),style:{left:pct(rec.from),width:((rec.to-rec.from)/(hi-lo)*100)+'%'}}));}});
+    row.append(tl);card.append(row);});box.append(card);}
+function drawSus(){const s=st.cur,box=$('#sus');if(!box)return;box.innerHTML='';s.d.suspects.forEach((sp,i)=>{box.append(h('button',{class:'suspect'+(s.selected===i?' sel':'')+(s.eliminated.has(i)?' out':''),'data-suspect':i,'aria-pressed':s.selected===i,onClick:()=>{s.selected=i;drawSus();}},
+  h('div',{class:'nm'},sp.emoji+' '+sp.name),h('div',{class:'mute'},sp.statement||'')));});}
+function fb(msg,ok){const e=$('#det-fb');if(e){e.textContent=msg;e.className='fb '+(ok?'ok':'bad');}}
+function hint(){const s=st.cur;if(s.done)return;if(s.hints>=3){fb('No more hints — you can reveal the solution if you are stuck.',false);return;}
+  s.hints++;Score.hint('detective');const t=s.d.hints[s.hints-1];fb('💡 Hint '+s.hints+': '+t,true);$('#det-hints').textContent='Hints: '+s.hints+'/3';$('#det-reveal').disabled=s.hints<3;
+  if(s.hints===2){s.d.clues.filter(c=>c.key).forEach(c=>s.inspected.add(c.id));drawClues();drawTL();}}
+function accuse(){const s=st.cur;if(s.done)return;if(s.selected==null){fb('Select a suspect first.',false);return;}
+  const ok=s.selected===s.d.answer;Score.attempt('detective',ok);
+  if(!ok){s.wrong++;s.eliminated.add(s.selected);const why=s.d.suspects[s.selected].cleared;fb('❌ Not '+s.d.suspects[s.selected].name+'. '+(why||''),false);s.selected=null;drawSus();return;}
+  finish(false);}
+function reveal(){const s=st.cur;if(s.hints<3||s.done)return;s.revealed=true;finish(true);}
+function finish(revealed){const s=st.cur;s.done=true;const keys=s.d.clues.filter(c=>c.key).map(c=>c.id);const hit=keys.every(k=>s.pinned.has(k));const lean=s.pinned.size<=keys.length+2;
+  const sc=Score.award('detective',s.c.id,{diff:s.c.diff,wrong:s.wrong,hints:s.hints,revealed});
+  let bonus=0;if(!revealed&&hit&&lean&&s.pinned.size>0){bonus=Math.round(25*s.c.diff);S.points+=bonus;G('detective').points+=bonus;save();}
+  const culprit=s.d.suspects[s.d.answer];
+  BPA.result({title:revealed?'Case closed (solution revealed)':'Case solved! 🕵️',emoji:revealed?'📖':'🎉',text:(revealed?'The culprit was ':'You caught ')+culprit.emoji+' '+culprit.name+'.',score:sc,lines:sc.lines.concat(bonus?['📌 Reasoning bonus: you pinned all the key clues without clutter: +'+bonus]:(!revealed?['Tip: pin every key clue (without extras) for a reasoning bonus.']:[])),
+    extraHtml:'<h3>How to deduce it</h3><p>'+esc(s.d.explanation)+'</p>',onMenu:menu,onReplay:()=>start(s.c,newSeed()),onNext:s.c.num<30?()=>nextCase():null,menuLabel:'Case list'});}
+function nextCase(){const s=st.cur;const n=s?s.c.num:0;const c=CASES[n%30];start(c);}
+BPA.games.detective={open:menu,resume(){const p=S.progress.detective;const c=p&&CASES.find(x=>x.id===p.caseId);if(c)start(c,p.seed,null,true);else menu();},
+  startDaily(pick){const c=CASES[pick.seed%30];start(c,pick.seed,pick);},get state(){return st.cur;},CASES};
+})();
+/* ===== Game 2: Escape Room ===== */
+(function(){
+const THEMES={
+ library:{n:'The Haunted Library',e:'📚',props:'🕯️',propN:'candles',words:['GHOST','ORACLE','SCROLL','MOON','RAVEN','SHADOW'],objs:[['📖','Spellbook'],['🕰️','Clock'],['🔦','Lantern'],['🪶','Quill'],['🗝️','Key']],syms:['🌙','⭐','🔮','🦉','📜']},
+ pirate:{n:'Pirate Cove',e:'🏴‍☠️',props:'💰',propN:'gold coins',words:['ANCHOR','PARROT','KRAKEN','CUTLASS','MAP','SAILOR'],objs:[['🧭','Compass'],['💎','Gem'],['🦜','Parrot'],['🗡️','Dagger'],['⚓','Anchor']],syms:['⚓','🦜','💀','🌴','🧭']},
+ space:{n:'Space Station Zeta',e:'🚀',props:'💡',propN:'warning lights',words:['ORBIT','COMET','ROCKET','PLASMA','LUNAR','NEBULA'],objs:[['🔋','Battery'],['📡','Antenna'],['🛰️','Satellite'],['🔬','Scanner'],['🧪','Fuel cell']],syms:['🪐','☄️','🌍','🌟','🚀']},
+ temple:{n:'Ancient Temple',e:'🏛️',props:'🔥',propN:'torches',words:['PHARAOH','SCARAB','SPHINX','RELIC','TOMB','IDOL'],objs:[['🏺','Urn'],['🗿','Idol'],['🪙','Coin'],['🔱','Trident'],['🧿','Amulet']],syms:['🐍','☀️','🦅','🐫','🔺']},
+ lab:{n:"Mad Scientist's Lab",e:'🧪',props:'⚗️',propN:'flasks',words:['ATOM','VOLTAGE','BEAKER','ENZYME','GENE','ROBOT'],objs:[['🧫','Dish'],['🔬','Microscope'],['⚡','Battery'],['🧲','Magnet'],['🧪','Serum']],syms:['⚛️','🧬','⚡','🔭','💥']},
+ subway:{n:'Subway Heist',e:'🚇',props:'🎫',propN:'tickets',words:['TUNNEL','PLATFORM','SIGNAL','TRACK','METRO','VAULT'],objs:[['🎒','Bag'],['📞','Phone'],['🔦','Torch'],['🧤','Gloves'],['🗺️','Map']],syms:['🚆','🚦','🛤️','🎫','🔑']},
+ wizard:{n:"Wizard's Tower",e:'🧙',props:'✨',propN:'sparkles',words:['WAND','POTION','DRAGON','CASTLE','RUNE','SPELL'],objs:[['🪄','Wand'],['🧪','Potion'],['📿','Amulet'],['🔮','Orb'],['📜','Scroll']],syms:['🐉','🔮','🌙','⚡','🪄']},
+ sub:{n:'Deep Sea Submarine',e:'🌊',props:'🫧',propN:'bubbles',words:['SONAR','TRENCH','PERISCOPE','CORAL','WHALE','DEPTH'],objs:[['🔦','Lamp'],['📻','Radio'],['🧰','Toolbox'],['🧭','Compass'],['🥽','Goggles']],syms:['🐙','🐋','⚓','🐚','🦈']},
+ clock:{n:'Clockwork Museum',e:'⏰',props:'⚙️',propN:'gears',words:['PENDULUM','SPRING','DIAL','CHIME','HOUR','TICKER'],objs:[['⌚','Watch'],['🕰️','Clock'],['⏳','Hourglass'],['🔔','Bell'],['🔧','Wrench']],syms:['⏰','⚙️','🔔','⏳','🔧']},
+ arctic:{n:'Arctic Research Base',e:'❄️',props:'🧊',propN:'ice blocks',words:['GLACIER','PENGUIN','BLIZZARD','FROST','IGLOO','POLAR'],objs:[['🧣','Scarf'],['🔥','Heater'],['🔦','Torch'],['📻','Radio'],['🥾','Boots']],syms:['❄️','🐧','🐻‍❄️','⛄','🧊']}};
+const ADV=[
+ {id:'a1',th:'library',stages:['numlock','cipher','symbols'],rev:false},
+ {id:'a2',th:'pirate',stages:['pattern','switches','numlock'],rev:false},
+ {id:'a3',th:'space',stages:['switches','pattern','objects','symbols'],rev:true},
+ {id:'a4',th:'temple',stages:['symbols','numlock','cipher'],rev:true},
+ {id:'a5',th:'lab',stages:['numlock','objects','switches'],rev:false},
+ {id:'a6',th:'subway',stages:['cipher','pattern','switches'],rev:true},
+ {id:'a7',th:'wizard',stages:['objects','symbols','cipher','numlock'],rev:false},
+ {id:'a8',th:'sub',stages:['switches','numlock','pattern'],rev:false},
+ {id:'a9',th:'clock',stages:['pattern','symbols','objects','numlock'],rev:true},
+ {id:'a10',th:'arctic',stages:['numlock','switches','cipher','pattern'],rev:false}
+].map((a,i)=>Object.assign(a,{num:i+1,diff:a.stages.length>=4?3:2,total:a.stages.length+1}));
+const ITEMS=['🗝️','🔑','🧿','📜','🧭'];
+const LET='ABCDEF';
+const outOf=x=>(x%5)+1;
+const NUMW=['','one','two','three','four','five'];
+
+/* ---------- stage generators ---------- */
+function gNumlock(rng,prev,th){const w=rng.pick(th.words);const dg=[];const lines=[];
+  if(prev!=null){dg[0]=prev;lines.push('Digit 1: it is the key number you already hold — the newest digit in your inventory.');}
+  else{const n=rng.int(2,7);dg[0]=n;lines.push('Digit 1: count the '+th.propN+' on the shelf → '+th.props.repeat(n));}
+  const a=rng.int(1,9),b=rng.int(1,9);dg[1]=rng.int(1,Math.min(9,a+b));const c=a+b-dg[1];lines.push('Digit 2: a torn note reads "'+a+' + '+b+' − '+c+'".');
+  dg[2]=w.length;lines.push('Digit 3: the number of letters in the word engraved on the lock plate: "'+w+'".');
+  return{type:'numlock',title:'Combination lock',desc:'Set the three dials to open the lock.',lines,code:dg,out:outOf(dg[0]+dg[1]+dg[2]),
+    hints:['Each digit has its own clue. Solve them one at a time.','Digits 1 and 2 are '+dg[0]+' and '+dg[1]+'.','The full code is '+dg.join('')+'.']};}
+function gCipher(rng,prev,th){const w=rng.pick(th.words.filter(x=>x.length<=9));const s=prev!=null?prev:rng.int(1,5);
+  const enc=w.split('').map(ch=>String.fromCharCode((ch.charCodeAt(0)-65+s)%26+65)).join('');
+  return{type:'cipher',title:'Cipher wheel',desc:'A coded word is carved above the door. Each letter was moved forward in the alphabet. '+(prev!=null?'The wheel shift is your newest key number.':'The scratch marks on the wheel show a shift of '+s+'.'),enc,shift:s,word:w,out:outOf(w.length),
+    hints:['Move every letter BACK in the alphabet by the shift. Use the wheel preview to try shifts.','The word starts with "'+w[0]+'" and has '+w.length+' letters.','The word is '+w+'.']};}
+function gSymbols(rng,prev,th){const start=prev!=null?prev:rng.int(1,5);const step=rng.int(2,3);const seq=[start];for(let i=1;i<4;i++)seq.push(((seq[i-1]-1+step)%5)+1);
+  return{type:'symbols',title:'Symbol ring',desc:'Five symbols are numbered 1–5 clockwise. '+(prev!=null?'Press the symbol whose number matches your newest key number first.':'A scratch on the wall says: begin with symbol '+start+'.')+' Each next press is '+step+' places clockwise from the last.',seq,syms:th.syms,out:seq[3],
+    hints:['Count clockwise around the ring: after symbol 5 comes symbol 1.','The number sequence begins '+seq[0]+', '+seq[1]+'.','Press the symbols numbered '+seq.join(', ')+' in that order.']};}
+function gPattern(rng,prev,th){const kind=rng.int(0,3);let t=[];let rule='';
+  const first=prev!=null?prev:rng.int(1,6);
+  if(kind===0){const d=rng.int(2,5);for(let i=0;i<6;i++)t.push(first+d*i);rule='add '+d+' each time';}
+  else if(kind===1){const r=rng.int(2,3);for(let i=0;i<6;i++)t.push(first*Math.pow(r,i));rule='multiply by '+r+' each time';}
+  else if(kind===2){let d=rng.int(1,3);t=[first];for(let i=1;i<6;i++){t.push(t[i-1]+d);d++;}rule='the gap grows by 1 each step';}
+  else{const b=rng.int(1,6);t=[first,b];for(let i=2;i<6;i++)t.push(t[i-1]+t[i-2]);rule='each term is the sum of the previous two';}
+  const ans=t[5];return{type:'pattern',title:'Hidden pattern',desc:'Numbers painted on the wall follow a rule. Find the missing last number.'+(prev!=null?' The first tile (🔑) is your newest key number.':''),terms:t.slice(0,5),useKey:prev!=null,ans,out:outOf(ans),
+    hints:['Look at how each number changes to the next.','The rule: '+rule+'.','The missing number is '+ans+'.']};}
+function gSwitches(rng,prev,th){const n=6;const k=prev!=null?prev:rng.int(1,5);
+  const all=[];for(let m=0;m<64;m++)all.push(m);const bit=(m,i)=>(m>>i)&1;const pc=m=>[0,1,2,3,4,5].reduce((a,i)=>a+bit(m,i),0);
+  let planted;do{planted=rng.int(1,62);}while(pc(planted)!==k);
+  const mk=()=>{const x=rng.int(0,5);let y=rng.int(0,5);while(y===x)y=rng.int(0,5);const t=rng.int(0,4);
+    if(t===0&&bit(planted,x)===0)return{f:m=>bit(m,x)===0,txt:'Switch '+LET[x]+' must be OFF.'};
+    if(t===1&&bit(planted,x)===1)return{f:m=>bit(m,x)===1,txt:'Switch '+LET[x]+' must be ON.'};
+    if(t===2&&!(bit(planted,x)&&!bit(planted,y)))return{f:m=>!(bit(m,x)&&!bit(m,y)),txt:'If '+LET[x]+' is ON then '+LET[y]+' must also be ON.'};
+    if(t===3&&!(bit(planted,x)&&bit(planted,y)))return{f:m=>!(bit(m,x)&&bit(m,y)),txt:LET[x]+' and '+LET[y]+' can never both be ON.'};
+    if(t===4&&bit(planted,x)!==bit(planted,y))return{f:m=>bit(m,x)!==bit(m,y),txt:'Exactly one of '+LET[x]+' and '+LET[y]+' is ON.'};return null;};
+  const sol=r=>all.filter(m=>pc(m)===k&&r.every(c=>c.f(m)));let rules=[];
+  for(let g=0;g<500&&sol(rules).length!==1;g++){const c=mk();if(c)rules.push(c);}
+  if(sol(rules).length!==1){rules=[];for(let i=0;i<6;i++)rules.push({f:m=>bit(m,i)===bit(planted,i),txt:'Switch '+LET[i]+' must be '+(bit(planted,i)?'ON':'OFF')+'.'});}
+  for(let i=rules.length-1;i>=0;i--){const t=rules.slice();t.splice(i,1);if(sol(t).length===1)rules=t;}
+  const m=sol(rules)[0];const onList=[0,1,2,3,4,5].filter(i=>bit(m,i));const first=onList[0];
+  return{type:'switches',title:'Switch panel',desc:'Six switches (A–F). Find the one setting that obeys every rule on the panel.',rules:['Exactly '+(prev!=null?'as many switches must be ON as your newest key number ('+k+' — check your inventory).':k+' switch'+(k>1?'es':'')+' must be ON.')].concat(rules.map(r=>r.txt)),k,mask:m,out:outOf(first),
+    hints:['Start with the counting rule and any rule that fixes a single switch.','These switches are ON: '+onList.slice(0,Math.max(1,onList.length-1)).map(i=>LET[i]).join(', ')+'.','Switches ON: '+onList.map(i=>LET[i]).join(', ')+' — all others OFF.']};}
+function gObjects(rng,prev,th){const n=5;const treasure=rng.int(0,n-1);let planted=rng.shuffle([0,1,2,3,4]);
+  let forcedObj=null;if(prev!=null){forcedObj=rng.int(0,n-1);if(forcedObj===treasure)forcedObj=(forcedObj+1)%n;const at=planted.indexOf(prev-1);// planted[obj]=shelf
+    const other=planted.indexOf(prev-1);if(other!==forcedObj){const t=planted[forcedObj];planted[forcedObj]=prev-1;planted[other]=t;}}
+  const nm=i=>th.objs[i][0]+' '+th.objs[i][1];const perms=[];(function pm(a,k){if(k===a.length){perms.push(a.slice());return;}for(let i=k;i<a.length;i++){[a[k],a[i]]=[a[i],a[k]];pm(a,k+1);[a[k],a[i]]=[a[i],a[k]];}})([0,1,2,3,4],0);
+  const mk=()=>{const o=rng.int(0,4);let p=rng.int(0,4);while(p===o)p=rng.int(0,4);const t=rng.int(0,3);
+    if(t===0)return{f:a=>a[o]===planted[o],txt:'The '+nm(o)+' is on shelf '+(planted[o]+1)+'.'};
+    if(t===1){const s=rng.int(0,4);if(s===planted[o])return null;return{f:a=>a[o]!==s,txt:'The '+nm(o)+' is not on shelf '+(s+1)+'.'};}
+    if(t===2){if(planted[o]>=planted[p])return null;return{f:a=>a[o]<a[p],txt:'The '+nm(o)+' is on a lower-numbered shelf than the '+nm(p)+'.'};}
+    if(Math.abs(planted[o]-planted[p])!==1)return null;return{f:a=>Math.abs(a[o]-a[p])===1,txt:'The '+nm(o)+' and the '+nm(p)+' are on neighbouring shelves.'};};
+  const forced=forcedObj!=null?{f:a=>a[forcedObj]===planted[forcedObj],txt:'The '+nm(forcedObj)+' sits on the shelf that carries your newest key number.',fixed:true}:null;
+  const base=forced?[forced]:[];const cnt=r=>perms.filter(a=>r.every(c=>c.f(a))).length;let rules=base.slice();
+  for(let g=0;g<600&&cnt(rules)!==1;g++){const c=mk();if(c)rules.push(c);}
+  for(let i=rules.length-1;i>=0;i--){if(rules[i].fixed)continue;const t=rules.slice();t.splice(i,1);if(cnt(t)===1)rules=t;}
+  return{type:'objects',title:'Shelf arrangement',desc:'Five objects must be placed on shelves 1–5, one per shelf. Follow the clues. The shelf that ends up holding the '+nm(treasure)+' gives your next key number.',rules:rules.map(r=>r.txt),planted,objs:th.objs,treasure,out:planted[treasure]+1,
+    hints:['Place objects with a direct shelf clue first.','The '+nm(planted.findIndex(s=>s===0))+' belongs on shelf 1; the '+nm(planted.findIndex(s=>s===4))+' on shelf 5.','Shelves 1–5: '+[0,1,2,3,4].map(s=>nm(planted.indexOf(s))).join(', ')+'.']};}
+const MAKE={numlock:gNumlock,cipher:gCipher,symbols:gSymbols,pattern:gPattern,switches:gSwitches,objects:gObjects};
+function buildAdventure(adv,seed){const rng=Rng(seed);const th=THEMES[adv.th];const stages=[];let prev=null;
+  adv.stages.forEach((t,i)=>{const s=MAKE[t](rng,prev,th);s.idx=i;stages.push(s);prev=s.out;});
+  const outs=stages.map(s=>s.out);const code=(adv.rev?outs.slice().reverse():outs).join('');
+  stages.push({type:'final',idx:stages.length,title:'The exit door',desc:'The exit keypad wants every key digit you collected, '+(adv.rev?'in REVERSE order (newest first)':'in the order you found them (oldest first)')+'.',code,
+    hints:['Open your inventory: every stage left you one key digit.','Enter them '+(adv.rev?'newest first':'oldest first')+'.','The code is '+code+'.']});
+  return{adv,th,seed,stages};}
+BPA.escapeBuild=buildAdventure;BPA.escapeAdv=ADV;
+
+/* ---------- UI ---------- */
+const st={cur:null};
+const saveProg=()=>{const s=st.cur;if(!s)return;S.progress.escape={adv:s.adv.id,seed:s.seed,idx:s.idx,hl:s.hl,wrong:s.wrong,done:s.done};save();};
+function menu(){BPA.ctx.daily=null;st.cur=null;const p=S.progress.escape;const pa=p&&ADV.find(a=>a.id===p.adv);
+  const root=h('div',null,h('h1',null,'🗝️ Escape Room'),h('p',{class:'mute'},'Pick an adventure. Solve each stage; every stage gives you a key digit that is used later. Your progress in the current adventure is saved automatically.'),
+    pa&&!p.done?h('div',{class:'card',style:{marginBottom:'12px'}},h('b',null,'In progress: '+THEMES[pa.th].e+' '+THEMES[pa.th].n+' — stage '+(p.idx+1)+'/'+pa.total),h('div',{class:'row',style:{marginTop:'8px'}},h('button',{class:'btn primary',id:'esc-resume',onClick:()=>resume()},'▶ Resume'))):null,
+    h('div',{class:'grid g-games'},ADV.map(a=>{const th=THEMES[a.th];const done=G('escape').done[a.id];return h('div',{class:'card'},h('h3',null,th.e+' #'+a.num+' '+th.n),h('div',{class:'row'},BPA.diffBadge(a.diff),h('span',{class:'chip'},a.total+' stages'),done?h('span',{class:'chip ok'},'✓ best '+G('escape').bestBy[a.id]):null),
+      h('div',{class:'row',style:{marginTop:'8px'}},h('button',{class:'btn primary','data-adv':a.id,onClick:()=>begin(a)},'▶ Play'),pa&&pa.adv===a.id&&!p.done?h('button',{class:'btn',onClick:resume},'Resume'):null));})));
+  BPA.show(root,{back:BPA.home});}
+function begin(a,seed,daily){const go=()=>{BPA.ctx.daily=daily||null;Score.play('escape');launch(a,seed||newSeed(),0,[0],0,false);};
+  const p=S.progress.escape;if(p&&!p.done&&p.adv!==a.id&&!daily)BPA.confirm('Starting a new adventure replaces your saved progress in the current one. Continue?',go);else go();}
+function launch(adv,seed,idx,hl,wrong){const b=buildAdventure(adv,seed);const n=b.stages.length;st.cur={adv,th:b.th,seed,stages:b.stages,idx,hl:(hl&&hl.length===n)?hl:Array(n).fill(0),wrong:wrong||0,done:false,solvedIdx:-1,startIdx:idx};
+  BPA.setLast('escape',THEMES[adv.th].n+' — stage '+(idx+1));saveProg();render();}
+function resume(){const p=S.progress.escape;const a=p&&ADV.find(x=>x.id===p.adv);if(!a||p.done)return menu();BPA.ctx.daily=null;launch(a,p.seed,p.idx,p.hl,p.wrong);}
+function totalHints(){return st.cur.hl.reduce((a,b)=>a+b,0);}
+function render(){const s=st.cur,stg=s.stages[s.idx],th=s.th;
+  const inv=h('div',{class:'inv','aria-label':'Inventory'},h('b',null,'🎒 Inventory:'),s.stages.slice(0,s.idx).map((x,i)=>h('span',{class:'item'},ITEMS[i]+' key digit '+x.out)),s.idx===0?h('span',{class:'mute'},'empty'):null);
+  const root=h('div',null,h('h1',null,th.e+' '+th.n),h('div',{class:'row'},h('span',{class:'chip'},'Stage '+(s.idx+1)+' / '+s.stages.length),h('span',{class:'chip'},'Hints used: '+totalHints())),inv,
+    h('div',{class:'card'},h('h2',null,(stg.type==='final'?'🚪 ':'🔧 ')+stg.title),h('p',null,stg.desc),h('div',{id:'esc-stage'}),h('div',{class:'fb',id:'esc-fb','aria-live':'polite'}),
+      h('div',{class:'row'},h('button',{class:'btn',id:'esc-hint',onClick:hint},'💡 Hint ('+s.hl[s.idx]+'/3)'),h('button',{class:'btn primary',id:'esc-check',onClick:()=>checkStage()},stg.type==='final'?'🔓 Try the code':'✔ Check'))));
+  BPA.show(root,{back:()=>{saveProg();menu();},restart:()=>{BPA.confirm('Restart this adventure with new numbers?',()=>{S.progress.escape=null;begin(s.adv,newSeed(),BPA.ctx.daily);});},next:null});
+  mount(stg);}
+const U={};
+function mount(stg){const box=$('#esc-stage');U.get=null;U.clear=null;U.pre=null;const th=st.cur.th;
+  const clueList=lines=>h('ul',null,lines.map(l=>h('li',null,l)));
+  if(stg.type==='numlock'){const v=[0,0,0];const disp=[];const dials=h('div',{class:'dials'},[0,1,2].map(i=>{const val=h('div',{class:'v','aria-live':'polite'},'0');disp.push(val);return h('div',{class:'dial'},h('button',{class:'btn sm','aria-label':'Digit '+(i+1)+' up',onClick:()=>{v[i]=(v[i]+1)%10;val.textContent=v[i];}},'▲'),val,h('button',{class:'btn sm','aria-label':'Digit '+(i+1)+' down',onClick:()=>{v[i]=(v[i]+9)%10;val.textContent=v[i];}},'▼'));}));
+    box.append(clueList(stg.lines),dials);U.get=()=>v.join('')===stg.code.join('');}
+  else if(stg.type==='cipher'){let sh=1;const prev=h('div',{class:'wheel'});const inp=h('input',{type:'text','aria-label':'Decoded word',autocomplete:'off',maxlength:12,placeholder:'Type the decoded word',id:'esc-word'});
+    const upd=()=>{prev.textContent=stg.enc.split('').map(c=>String.fromCharCode((c.charCodeAt(0)-65-sh+26)%26+65)).join(' ');lab.textContent='Preview shift: '+sh;};const lab=h('b');
+    box.append(h('div',{class:'tiles'},stg.enc.split('').map(c=>h('div',{class:'tile'},c))),h('div',{class:'row',style:{justifyContent:'center',margin:'8px 0'}},h('button',{class:'btn sm','aria-label':'Decrease shift',onClick:()=>{sh=(sh+24)%26+1;upd();}},'◀'),lab,h('button',{class:'btn sm','aria-label':'Increase shift',onClick:()=>{sh=sh%26+1;upd();}},'▶')),prev,h('div',{class:'row',style:{justifyContent:'center'}},inp));upd();
+    U.get=()=>inp.value.trim().toUpperCase()===stg.word;}
+  else if(stg.type==='symbols'){const entered=[];const seq=h('div',{class:'seq','aria-live':'polite'});const ring=h('div',{class:'ring'});
+    stg.syms.forEach((sy,i)=>{const ang=-Math.PI/2+i*2*Math.PI/5;ring.append(h('button',{class:'btn sym','data-sym':i+1,'aria-label':'Symbol '+(i+1)+' '+sy,style:{left:(50+38*Math.cos(ang))+'%',top:(50+38*Math.sin(ang))+'%'},onClick:()=>{if(entered.length>=4)return;entered.push(i+1);drawSeq();}},sy,h('sub',null,String(i+1))));});
+    ring.append(h('div',{style:{position:'absolute',left:'50%',top:'50%',transform:'translate(-50%,-50%)',textAlign:'center'},class:'mute'},'↻ clockwise'));
+    const drawSeq=()=>{seq.innerHTML='';for(let i=0;i<4;i++)seq.append(h('span',{class:'tile'},entered[i]?stg.syms[entered[i]-1]+' '+entered[i]:'·'));};drawSeq();
+    box.append(ring,seq,h('div',{class:'row',style:{justifyContent:'center'}},h('button',{class:'btn sm',id:'esc-clear',onClick:()=>{entered.length=0;drawSeq();}},'Clear'),h('button',{class:'btn sm',onClick:()=>{entered.pop();drawSeq();}},'⌫ Undo')));
+    U.get=()=>entered.length===4&&entered.every((x,i)=>x===stg.seq[i]);U.clear=()=>{entered.length=0;drawSeq();};}
+  else if(stg.type==='pattern'){const inp=h('input',{type:'number',inputmode:'numeric','aria-label':'Missing number',id:'esc-num',placeholder:'?'});
+    box.append(h('div',{class:'tiles'},stg.terms.map((t,i)=>h('div',{class:'tile'},i===0&&stg.useKey?'🔑':t)),h('div',{class:'tile'},'?')),h('div',{class:'row',style:{justifyContent:'center',marginTop:'10px'}},inp));U.get=()=>inp.value!==''&&Number(inp.value)===stg.ans;}
+  else if(stg.type==='switches'){const on=Array(6).fill(false);const cnt=h('b',null,'ON: 0');const row=h('div',{class:'sw-row'});
+    const draw=()=>{row.innerHTML='';on.forEach((v,i)=>row.append(h('button',{class:'sw','data-sw':i,'aria-pressed':v,'aria-label':'Switch '+LET[i]+(v?' on':' off'),onClick:()=>{on[i]=!on[i];draw();}},h('span',null,LET[i]),h('span',{class:'lev'}),h('small',null,v?'ON':'OFF'))));cnt.textContent='ON: '+on.filter(Boolean).length;};draw();
+    box.append(h('p',null,h('b',null,'Panel rules:')),clueList(stg.rules),row,h('div',{style:{textAlign:'center'}},cnt));U.get=()=>on.every((v,i)=>v===!!((stg.mask>>i)&1));}
+  else if(stg.type==='objects'){const sels=[];const list=h('div',{class:'shelves'});
+    for(let s=0;s<5;s++){const sel=h('select',{'aria-label':'Shelf '+(s+1),'data-shelf':s},h('option',{value:''},'— choose —'),stg.objs.map((o,i)=>h('option',{value:i},o[0]+' '+o[1])));sels.push(sel);list.append(h('div',{class:'shelf'},h('b',null,'Shelf '+(s+1)),sel));}
+    box.append(h('p',null,h('b',null,'Clues:')),clueList(stg.rules),list);U.get=()=>{const v=sels.map(x=>x.value);if(v.some(x=>x===''))return false;if(new Set(v).size<5)return false;return v.every((x,s)=>stg.planted[+x]===s);};
+    U.pre=()=>{const v=sels.map(x=>x.value);if(v.some(x=>x===''))return'Fill every shelf first.';if(new Set(v).size<5)return'Each object can only be on one shelf.';return null;};}
+  else if(stg.type==='final'){let ent='';const disp=h('div',{class:'disp','aria-live':'polite'},'—');const L=stg.code.length;const pad=h('div',{class:'keypad'});
+    [1,2,3,4,5,6,7,8,9,'C',0,'⌫'].forEach(k=>pad.append(h('button',{class:'btn','data-key':k,onClick:()=>{if(k==='C')ent='';else if(k==='⌫')ent=ent.slice(0,-1);else if(ent.length<L)ent+=k;disp.textContent=ent||'—';}},String(k))));
+    box.append(h('p',null,'Code length: '+L+' digits.'),disp,pad);U.get=()=>ent===stg.code;U.clear=()=>{ent='';disp.textContent='—';};}
+}
+function fb(msg,ok){const e=$('#esc-fb');e.textContent=msg;e.className='fb '+(ok?'ok':'bad');}
+function hint(){const s=st.cur,stg=s.stages[s.idx];if(s.hl[s.idx]>=3){fb('💡 '+stg.hints[2],true);return;}s.hl[s.idx]++;Score.hint('escape');fb('💡 Hint '+s.hl[s.idx]+': '+stg.hints[s.hl[s.idx]-1],true);$('#esc-hint').textContent='💡 Hint ('+s.hl[s.idx]+'/3)';saveProg();}
+function checkStage(){const s=st.cur;if(s.done)return;const stg=s.stages[s.idx];if(U.pre){const m=U.pre();if(m){fb(m,false);return;}}
+  const ok=!!(U.get&&U.get());Score.attempt('escape',ok);
+  if(!ok){s.wrong++;saveProg();fb(stg.type==='final'?'🔒 The door stays shut. Check your inventory and the entry order.':stg.type==='symbols'?'❌ The ring stays dark. Try again from the start.':'❌ Not quite — the mechanism does not respond.',false);if(U.clear&&stg.type!=='numlock')U.clear();return;}
+  if(stg.type==='final'){s.done=true;S.progress.escape.done=true;const sc=Score.award('escape',s.adv.id,{diff:s.adv.diff,wrong:s.wrong,hints:totalHints(),par:0});
+    BPA.result({title:'You escaped! 🚪',emoji:'🎉',text:'You made it out of '+s.th.n+'.',score:sc,lines:sc.lines,onMenu:menu,onReplay:()=>begin(s.adv,newSeed()),onNext:s.adv.num<10?()=>begin(ADV[s.adv.num]):null,menuLabel:'Adventures'});return;}
+  fb('✅ Unlocked! You found '+ITEMS[s.idx]+' key digit '+stg.out+'. It goes into your inventory.',true);
+  const nb=h('button',{class:'btn good',id:'esc-next',onClick:()=>{s.idx++;BPA.setLast('escape',s.th.n+' — stage '+(s.idx+1));saveProg();render();}},'Next stage ▶');$('#esc-check').replaceWith(nb);$('#esc-hint').disabled=true;saveProg();nb.focus();}
+function nextAdv(){const s=st.cur;const n=s?s.adv.num:0;begin(ADV[n%10]);}
+BPA.games.escape={open:menu,resume,startDaily(pick){begin(ADV[pick.seed%10],pick.seed,pick);},get state(){return st.cur;},ADV};
+})();
+/* ===== Game 3: Shape Shifter ===== */
+(function(){
+const PAL=['#7c5cff','#00b8e6','#ff5fa8','#7fc41a','#ffb020','#ff7b54','#2fd3a0','#c084fc'];
+const D4=[[1,0],[-1,0],[0,1],[0,-1]];
+const norm=cells=>{let mr=1e9,mc=1e9;cells.forEach(([r,c])=>{mr=Math.min(mr,r);mc=Math.min(mc,c);});return cells.map(([r,c])=>[r-mr,c-mc]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]);};
+const rotR=cells=>norm(cells.map(([r,c])=>[c,-r]));
+const rotL=cells=>norm(cells.map(([r,c])=>[-c,r]));
+const flipH=cells=>norm(cells.map(([r,c])=>[r,-c]));
+const keyOf=cells=>norm(cells).map(x=>x.join(',')).join(';');
+const canon=cells=>{let best=null,cur=norm(cells);for(let f=0;f<2;f++){for(let i=0;i<4;i++){cur=rotR(cur);const k=keyOf(cur);if(best===null||k<best)best=k;}cur=flipH(cur);}return best;};
+const anchorOf=cells=>{const mr=cells.reduce((a,x)=>a+x[0],0)/cells.length,mc=cells.reduce((a,x)=>a+x[1],0)/cells.length;let b=0,bd=1e9;cells.forEach((x,i)=>{const d=(x[0]-mr)**2+(x[1]-mc)**2;if(d<bd){bd=d;b=i;}});return cells[b];};
+function growBlob(rng,w,hh,size){const set=new Set();const s=[rng.int(0,hh-1),rng.int(0,w-1)];set.add(s.join());const list=[s];let guard=0;while(list.length<size&&guard++<5000){const b=rng.pick(list),d=rng.pick(D4);const r=b[0]+d[0],c=b[1]+d[1];if(r<0||c<0||r>=hh||c>=w)continue;const k=r+','+c;if(set.has(k))continue;set.add(k);list.push([r,c]);}return list;}
+function partition(rng,cells,k){const idx=new Map(cells.map((c,i)=>[c.join(),i]));const owner=Array(cells.length).fill(-1);const seeds=rng.shuffle(cells.map((_,i)=>i)).slice(0,k);seeds.forEach((s,p)=>owner[s]=p);const sizes=Array(k).fill(1);let left=cells.length-k;
+  while(left>0){const cands=[];for(let i=0;i<cells.length;i++){if(owner[i]!==-1)continue;for(const d of D4){const j=idx.get((cells[i][0]+d[0])+','+(cells[i][1]+d[1]));if(j!=null&&owner[j]!==-1)cands.push([i,owner[j]]);}}
+    if(!cands.length)return null;const mn=Math.min(...cands.map(x=>sizes[x[1]]));const pool=cands.filter(x=>sizes[x[1]]<=mn+1);const [i,p]=rng.pick(pool);owner[i]=p;sizes[p]++;left--;}
+  const parts=Array.from({length:k},()=>[]);cells.forEach((c,i)=>parts[owner[i]].push(c));if(parts.some(p=>p.length<2||p.length>6))return null;return parts;}
+function randomOrient(rng,cells,avoidKey){let c=norm(cells);for(let t=0;t<30;t++){let x=c;const r=rng.int(0,3);for(let i=0;i<r;i++)x=rotR(x);if(rng.chance(.5))x=flipH(x);if(avoidKey==null||keyOf(x)!==avoidKey)return x;}return flipH(c);}
+
+/* ----- level generation ----- */
+const TYPES=['tile','sym','orient','matrix'];
+const TNAME={tile:'Silhouette Fit',sym:'Mirror Maker',orient:'Spin & Match',matrix:'Pattern Matrix'};
+function genTile(i){const t=Math.floor(i/4);const P=[[3,3,6,2],[4,3,8,3],[4,4,10,3],[4,4,12,4],[5,4,14,4],[5,5,16,5],[5,5,18,5],[6,5,20,6]][t];const rng=Rng(1000+i*77);
+  for(let g=0;g<400;g++){const blob=growBlob(rng,P[0],P[1],P[2]);if(blob.length!==P[2])continue;const parts=partition(rng,blob,P[3]);if(!parts)continue;
+    const mr=Math.min(...blob.map(x=>x[0])),mc=Math.min(...blob.map(x=>x[1]));const target=blob.map(([r,c])=>[r-mr,c-mc]);
+    const pieces=parts.map((p,k)=>{const sol=p.map(([r,c])=>[r-mr,c-mc]);return{id:k,color:PAL[k%PAL.length],sol,cells:randomOrient(rng,sol,keyOf(sol)),placed:null,decoy:false};});
+    return{type:'tile',target,pieces:rng.shuffle(pieces),w:Math.max(...target.map(x=>x[1]))+1,h:Math.max(...target.map(x=>x[0]))+1,par:pieces.length};}
+  throw new Error('tile gen failed');}
+function genOrient(i){const t=Math.floor(i/4);const size=4+Math.floor(t/2);const rng=Rng(5000+i*91);
+  for(let g=0;g<600;g++){const blob=norm(growBlob(rng,4,4,size));if(blob.length!==size)continue;const tgt=randomOrient(rng,blob,null);const trayO=randomOrient(rng,blob,keyOf(tgt));
+    const dec=[];const seen=new Set([canon(blob)]);let tries=0;
+    while(dec.length<2&&tries++<200){const cells=blob.map(x=>x.slice());const rem=rng.int(0,cells.length-1);const removed=cells.splice(rem,1)[0];const base=rng.pick(cells);const d=rng.pick(D4);const nc=[base[0]+d[0],base[1]+d[1]];
+      if(cells.some(x=>x[0]===nc[0]&&x[1]===nc[1])||(nc[0]===removed[0]&&nc[1]===removed[1]))continue;cells.push(nc);const n2=norm(cells);
+      // connected?
+      const sset=new Set(n2.map(x=>x.join()));const st=[n2[0]];const vis=new Set([n2[0].join()]);while(st.length){const c=st.pop();for(const dd of D4){const k=(c[0]+dd[0])+','+(c[1]+dd[1]);if(sset.has(k)&&!vis.has(k)){vis.add(k);st.push(k.split(',').map(Number));}}}
+      if(vis.size!==n2.length)continue;const cn=canon(n2);if(seen.has(cn))continue;seen.add(cn);dec.push(n2);}
+    if(dec.length<2)continue;
+    const all=[{id:0,color:PAL[0],sol:tgt,cells:trayO,placed:null,decoy:false}].concat(dec.map((d,k)=>({id:k+1,color:PAL[(k+3)%PAL.length],sol:null,cells:randomOrient(rng,d,null),placed:null,decoy:true})));
+    return{type:'orient',target:tgt,pieces:rng.shuffle(all),w:Math.max(...tgt.map(x=>x[1]))+1,h:Math.max(...tgt.map(x=>x[0]))+1,par:1};}
+  throw new Error('orient gen failed');}
+const SYMS=['V','H','V','D','R180','VH','R90','D'];const SYMN=[4,5,6,6,7,8,8,8];
+const SYMTXT={V:'left ↔ right mirror',H:'top ↔ bottom mirror',D:'diagonal mirror (top-left to bottom-right)',R180:'half-turn (180°) symmetry',VH:'both mirrors (left↔right and top↔bottom)',R90:'quarter-turn (90°) symmetry'};
+function symTransforms(type,n){const m=n-1;return({V:[(r,c)=>[r,m-c]],H:[(r,c)=>[m-r,c]],D:[(r,c)=>[c,r]],R180:[(r,c)=>[m-r,m-c]],VH:[(r,c)=>[r,m-c],(r,c)=>[m-r,c]],R90:[(r,c)=>[c,m-r]]})[type];}
+function orbit(type,n,r,c){const T=symTransforms(type,n);const seen=new Map([[r+','+c,[r,c]]]);let ch=true;while(ch){ch=false;for(const p of [...seen.values()])for(const f of T){const q=f(p[0],p[1]);const k=q[0]+','+q[1];if(!seen.has(k)){seen.set(k,q);ch=true;}}}return[...seen.values()];}
+function genSym(i){const t=Math.floor(i/4);const type=SYMS[t],n=SYMN[t];const colors=t>=6?3:t>=3?2:1;const rng=Rng(9000+i*13);
+  for(let g=0;g<200;g++){const master=[];const grid=Array.from({length:n},()=>Array(n).fill(0));const lock=Array.from({length:n},()=>Array(n).fill(false));let useful=0;
+    for(let r=0;r<n;r++)for(let c=0;c<n;c++){const orb=orbit(type,n,r,c);const rep=orb.reduce((a,b)=>(b[0]*n+b[1]<a[0]*n+a[1]?b:a));if(rep[0]===r&&rep[1]===c){lock[r][c]=true;grid[r][c]=rng.chance(.5)?rng.int(1,colors):0;if(grid[r][c]&&orb.length>1)useful++;}}
+    if(useful<3)continue;const sol=grid.map(row=>row.slice());for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(!lock[r][c]){const orb=orbit(type,n,r,c);const rep=orb.reduce((a,b)=>(b[0]*n+b[1]<a[0]*n+a[1]?b:a));sol[r][c]=grid[rep[0]][rep[1]];}
+    return{type:'sym',sym:type,n,colors,grid,lock,sol,par:0};}
+  throw new Error('sym gen failed');}
+/* matrix */
+const BASE=[[[0,1],[0,2],[1,0],[1,1],[2,1]],[[0,0],[1,0],[2,0],[2,1]]];
+const COLS=['#7c5cff','#00b8e6','#ff5fa8'];
+function glyph(tp,size){const [rot,col,flip,shape]=tp;let cells=BASE[shape];cells=flip?flipH(cells):norm(cells);for(let i=0;i<rot;i++)cells=rotR(cells);
+  const u=size/4.2;const svg=sv('svg',{viewBox:'0 0 '+size+' '+size,width:size,height:size,role:'img','aria-label':'shape'});const ox=(size-3*u)/2,oy=(size-3*u)/2;
+  cells.forEach(([r,c])=>svg.append(sv('rect',{x:ox+c*u,y:oy+r*u,width:u-1,height:u-1,rx:3,fill:COLS[col]})));
+  for(let i=0;i<=col;i++)svg.append(sv('circle',{cx:6+i*7,cy:size-6,r:2.6,fill:'var(--ink)'}));return svg;}
+function genMatrix(i){const t=Math.floor(i/4);const rng=Rng(13000+i*29);const act={rot:true,col:t>=1,flip:t>=3,shape:t>=5};
+  const RC=[[0,1],[1,0],[1,1],[1,3],[3,1]],CC=[[1,0],[0,1],[1,1],[1,2],[2,1]],FC=[[1,0],[0,1],[1,1]],SC=[[1,0],[0,1],[1,1]];
+  let rc=rng.pick(RC),cc=rng.pick(CC),fc=rng.pick(FC),sc=rng.pick(SC);const r0=rng.int(0,3),c0=rng.int(0,2);
+  const cell=(r,c)=>[act.rot?(r0+rc[0]*r+rc[1]*c)%4:0,act.col?(c0+cc[0]*r+cc[1]*c)%3:rng.int(0,0),act.flip?(fc[0]*r+fc[1]*c)%2:0,act.shape?(sc[0]*r+sc[1]*c)%2:0];
+  const grid=[];for(let r=0;r<3;r++){grid.push([]);for(let c=0;c<3;c++)grid[r].push(cell(r,c));}
+  const ans=grid[2][2];const cnt=t<2?4:6;const opts=[ans];const seen=new Set([ans.join()]);const attrs=Object.keys(act).filter(k=>act[k]);let g=0;
+  while(opts.length<cnt&&g++<300){const o=ans.slice();const a=rng.pick(attrs);if(a==='rot')o[0]=(o[0]+rng.int(1,3))%4;else if(a==='col')o[1]=(o[1]+rng.int(1,2))%3;else if(a==='flip')o[2]=1-o[2];else o[3]=1-o[3];if(rng.chance(.3)&&attrs.length>1){const b=rng.pick(attrs);if(b==='col')o[1]=(o[1]+1)%3;}
+    if(seen.has(o.join()))continue;seen.add(o.join());opts.push(o);}
+  const rules=[];rules.push('Turning: moving one cell right adds '+rc[1]+' quarter-turn(s); moving one cell down adds '+rc[0]+'.');if(act.col)rules.push('Colour (dots 1–3): moving right shifts the colour by '+cc[1]+'; moving down shifts it by '+cc[0]+' (wrapping 1→2→3→1).');if(act.flip)rules.push('Mirror: the shape is flipped when '+(fc[0]&&fc[1]?'row + column is odd':fc[0]?'the row is odd':'the column is odd')+'.');if(act.shape)rules.push('Shape type changes when '+(sc[0]&&sc[1]?'row + column is odd':sc[0]?'the row is odd':'the column is odd')+'.');
+  return{type:'matrix',grid,ans,opts:rng.shuffle(opts),rules,par:0};}
+const GEN={tile:genTile,sym:genSym,orient:genOrient,matrix:genMatrix};
+BPA.shapeGen=i=>GEN[TYPES[i%4]](i);BPA.shapeCanon=canon;
+
+/* ----- UI ----- */
+const st={cur:null,lastIdx:0};const CS=40;
+const tierOf=i=>Math.floor(i/4);const diffOf=i=>{const t=tierOf(i);return t<3?1:t<6?2:3;};
+function menu(){BPA.ctx.daily=null;st.cur=null;const grid=h('div',{class:'lvgrid'});
+  for(let i=0;i<30;i++){const done=G('shape').done[String(i)];const open=BPA.level('shape',i);grid.append(h('button',{class:'btn lv'+(done?' sel':''),'data-level':i,disabled:!open,'aria-label':'Level '+(i+1)+' '+TNAME[TYPES[i%4]]+(done?' completed':open?'':' locked'),onClick:()=>play(i)},String(i+1),h('small',null,done?'✓':open?['▣','◧','↻','▦'][i%4]:'🔒')));}
+  BPA.show(h('div',null,h('h1',null,'🧩 Shape Shifter'),h('p',{class:'mute'},'30 spatial levels. Select a piece, rotate or flip it, then tap (or drag) it onto the board. Level types: ▣ Silhouette Fit, ◧ Mirror Maker, ↻ Spin & Match, ▦ Pattern Matrix. Solve a level to unlock the next.'),grid),{back:BPA.home});}
+function play(i,daily,resume){BPA.ctx.daily=daily||null;if(!resume)Score.play('shape');const lv=GEN[TYPES[i%4]](i);
+  st.cur={i,lv,sel:null,moves:0,hints:0,wrong:0,ghost:null,done:false,timer:null,hintCells:null};st.lastIdx=i;BPA.setLast('shape','Level '+(i+1)+' — '+TNAME[TYPES[i%4]]);S.progress.shape={level:i};save();render();}
+function nextLevel(){const s=st.cur;if(!s)return;const n=s.i+1;if(n>=30){toast('That was the last level — well done!');return menu();}if(!BPA.level('shape',n)){toast('Solve this level to unlock the next one.');return;}play(n);}
+function render(){const s=st.cur,lv=s.lv,i=s.i;const root=h('div',null,h('h1',null,'Level '+(i+1)+': '+TNAME[lv.type]),h('div',{class:'row'},BPA.diffBadge(diffOf(i)),h('span',{class:'chip',id:'sh-moves'},'Moves: 0'),h('span',{class:'chip',id:'sh-hints'},'Hints: 0'),h('span',{id:'sh-timer'})),
+    h('p',{class:'mute',id:'sh-goal'}),h('div',{class:'play two',id:'sh-play'}),h('div',{class:'fb',id:'sh-fb','aria-live':'polite'}));
+  BPA.show(root,{back:menu,restart:()=>play(i,BPA.ctx.daily),next:()=>nextLevel()});
+  if(isChallenge()){const secs=[90,120,100,150][i%4]+tierOf(i)*15;s.timer=BPA.makeTimer($('#sh-timer'),secs,()=>fb('⏱ Time is up — no penalty. Keep going; only the time bonus is gone.',true));}
+  ({tile:renderTile,orient:renderTile,sym:renderSym,matrix:renderMatrix})[lv.type]();
+  BPA.keyHandler=e=>{const k=e.key.toLowerCase();if(lv.type==='tile'||lv.type==='orient'){if(k==='r')xform('rot');else if(k==='f')xform('flip');else if(k==='l')xform('rotL');else if(k==='escape'){s.sel=null;renderTile();}}};}
+function fb(m,ok){const e=$('#sh-fb');if(e){e.textContent=m;e.className='fb '+(ok?'ok':'bad');}}
+function stat(){const m=$('#sh-moves');if(m)m.textContent='Moves: '+st.cur.moves;const hh=$('#sh-hints');if(hh)hh.textContent='Hints: '+st.cur.hints;}
+function win(extra){const s=st.cur;if(s.done)return;s.done=true;let gone=false;BPA.onLeave(()=>{gone=true;});if(s.timer)s.timer.stop();const board=$('.board')||$('.symgrid');board&&board.classList.add('winpulse');
+  const sc=Score.award('shape',String(s.i),{diff:diffOf(s.i),wrong:s.wrong,hints:s.hints,par:s.lv.par||0,moves:s.moves,timeFrac:s.timer?s.timer.frac():null});S.progress.shape={level:Math.min(29,s.i+1)};save();
+  setTimeout(()=>!gone&&BPA.result({title:'Level '+(s.i+1)+' complete!',emoji:'🌟',text:extra||'Perfect fit!',score:sc,lines:sc.lines,onMenu:menu,onReplay:()=>play(s.i,null),onNext:s.i<29?()=>nextLevel():null,menuLabel:'Levels'}),reducedNow()?0:450);}
+const reducedNow=()=>document.documentElement.dataset.motion==='reduce'||(document.documentElement.dataset.motion==='auto'&&window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+/* --- tile / orient --- */
+const piece=id=>st.cur.lv.pieces.find(p=>p.id===id);
+function xform(kind){const s=st.cur;if(s.sel==null){fb('Select a piece first (tap it in the tray).',false);return;}const p=piece(s.sel);p.cells=kind==='rot'?rotR(p.cells):kind==='rotL'?rotL(p.cells):flipH(p.cells);fb('',true);renderTile();}
+function absCells(p,r,c){const a=anchorOf(p.cells);return p.cells.map(([y,x])=>[y-a[0]+r,x-a[1]+c]);}
+function occupied(except){const m=new Map();st.cur.lv.pieces.forEach(p=>{if(p.placed&&p!==except)p.placed.forEach(([r,c])=>m.set(r+','+c,p.id));});return m;}
+function validAt(p,r,c){const T=new Set(st.cur.lv.target.map(x=>x.join()));const occ=occupied(p);const cells=absCells(p,r,c);return{cells,ok:cells.every(x=>T.has(x.join())&&!occ.has(x.join()))};}
+function tryPlace(p,r,c){const s=st.cur;const v=validAt(p,r,c);if(!v.ok){fb('That piece does not fit there — try rotating or flipping it, or another spot.',false);const b=$('.board');if(b){b.classList.remove('shake');void b.getBoundingClientRect();b.classList.add('shake');}renderTile();return false;}
+  p.placed=v.cells;s.moves++;s.sel=null;s.hintCells=null;fb('',true);renderTile();stat();checkTile();return true;}
+function checkTile(){const s=st.cur;const T=s.lv.target.length;const cov=new Set();s.lv.pieces.forEach(p=>p.placed&&p.placed.forEach(x=>cov.add(x.join())));if(cov.size===T&&s.lv.target.every(x=>cov.has(x.join())))win(s.lv.type==='orient'?'You found the right piece and orientation!':'Every cell of the silhouette is filled!');}
+function cellAct(r,c){const s=st.cur;if(s.done)return;if(s.sel!=null){tryPlace(piece(s.sel),r,c);return;}const occ=occupied();const id=occ.get(r+','+c);if(id!=null){const p=piece(id);p.placed=null;s.sel=id;fb('Piece picked up — rotate/flip it or place it again.',true);renderTile();}}
+function pieceSvg(cells,size,color,extra){const w=Math.max(...cells.map(x=>x[1]))+1,hh=Math.max(...cells.map(x=>x[0]))+1;const svg=sv('svg',{viewBox:'0 0 '+w*size+' '+hh*size,width:w*size,height:hh*size,'aria-hidden':'true'});cells.forEach(([r,c])=>svg.append(sv('rect',{x:c*size+1,y:r*size+1,width:size-2,height:size-2,rx:4,fill:color,stroke:'rgba(0,0,0,.35)'})));return svg;}
+function renderTile(){const s=st.cur,lv=s.lv;const play=$('#sh-play');if(!play)return;play.innerHTML='';
+  $('#sh-goal').textContent=lv.type==='orient'?'Goal: one of these pieces matches the silhouette exactly. Rotate/flip to find which — extra pieces are decoys.':'Goal: fill every cell of the silhouette with the pieces — no gaps, no overlaps.';
+  const W=lv.w,H=lv.h;const svg=sv('svg',{class:'board',viewBox:'0 0 '+W*CS+' '+H*CS,role:'group','aria-label':'Puzzle board'});
+  lv.target.forEach(([r,c])=>svg.append(sv('rect',{class:'cellbg','data-r':r,'data-c':c,x:c*CS,y:r*CS,width:CS,height:CS,tabindex:'0',role:'button','aria-label':'Cell row '+(r+1)+' column '+(c+1)})));
+  if(s.hintCells)s.hintCells.cells.forEach(([r,c])=>svg.append(sv('rect',{x:c*CS+4,y:r*CS+4,width:CS-8,height:CS-8,rx:5,fill:'none',stroke:s.hintCells.color,'stroke-width':3,'stroke-dasharray':'6 4','pointer-events':'none'})));
+  lv.pieces.forEach(p=>{if(p.placed)p.placed.forEach(([r,c])=>svg.append(sv('rect',{'data-r':r,'data-c':c,'data-piece':p.id,x:c*CS+2,y:r*CS+2,width:CS-4,height:CS-4,rx:7,fill:p.color,stroke:'rgba(0,0,0,.4)',style:'cursor:pointer'})));});
+  svg.append(sv('g',{id:'sh-pv','pointer-events':'none'}));
+  svg.addEventListener('click',e=>{const t=e.target.closest('[data-r]');if(t)cellAct(+t.dataset.r,+t.dataset.c);});
+  svg.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const t=e.target.closest('[data-r]');if(t){e.preventDefault();cellAct(+t.dataset.r,+t.dataset.c);}}});
+  svg.addEventListener('pointermove',e=>{if(s.sel!=null&&e.buttons===0)preview(e);});svg.addEventListener('pointerleave',()=>clearPv());
+  svg.addEventListener('pointerdown',e=>{const t=e.target.closest('[data-piece]');if(t&&s.sel==null)beginPointer(e,+t.dataset.piece,true);});
+  const tray=h('div',null,h('h3',null,'Pieces'),h('div',{class:'tray',id:'sh-tray'}),
+    h('div',{class:'row',style:{marginTop:'10px'}},h('button',{class:'btn sm',id:'sh-rl','aria-label':'Rotate left (L)',onClick:()=>xform('rotL')},'⟲ Left'),h('button',{class:'btn sm',id:'sh-rr','aria-label':'Rotate right (R)',onClick:()=>xform('rot')},'⟳ Right'),h('button',{class:'btn sm',id:'sh-flip','aria-label':'Flip (F)',onClick:()=>xform('flip')},'⇋ Flip')),
+    h('div',{class:'row',style:{marginTop:'8px'}},h('button',{class:'btn sm',id:'sh-hint',onClick:hintTile},'💡 Hint'),h('button',{class:'btn sm',id:'sh-reset',onClick:()=>{lv.pieces.forEach(p=>p.placed=null);s.sel=null;s.hintCells=null;fb('Board cleared.',true);renderTile();}},'↺ Reset board')),
+    h('p',{class:'mute'},'Keys: R rotate · L rotate left · F flip · Esc deselect. Drag works too.'));
+  play.append(h('div',null,svg),tray);const tr=$('#sh-tray');
+  lv.pieces.forEach(p=>{const b=h('button',{class:'pc'+(s.sel===p.id?' sel':'')+(p.placed?' used':''),'data-piece-id':p.id,'aria-label':'Piece '+(p.id+1)+(s.sel===p.id?' selected':'')+(p.placed?' placed':''),'aria-pressed':s.sel===p.id,
+      onClick:e=>{if(e.detail===0)selectPiece(p.id);}});b.append(pieceSvg(p.cells,22,p.color));b.addEventListener('pointerdown',e=>beginPointer(e,p.id,false));tr.append(b);});
+  stat();}
+function selectPiece(id){const s=st.cur;if(s.done)return;const p=piece(id);if(p.placed){p.placed=null;s.sel=id;}else s.sel=s.sel===id?null:id;renderTile();}
+function hintTile(){const s=st.cur;if(s.done)return;const need=s.lv.pieces.filter(p=>!p.decoy&&(!p.placed||!p.sol));let p=s.lv.pieces.find(p=>!p.decoy&&!p.placed);if(!p){fb('All pieces are placed — check for gaps.',false);return;}
+  s.hints++;Score.hint('shape');s.hintCells={cells:p.sol,color:p.color};s.sel=p.id;fb('💡 Hint: the dashed outline shows where the highlighted piece belongs. You still need to rotate/flip it to match.',true);renderTile();}
+function cellAt(e){const b=$('.board');if(!b)return null;const r=b.getBoundingClientRect();const W=st.cur.lv.w,H=st.cur.lv.h;const x=(e.clientX-r.left)/r.width*W,y=(e.clientY-r.top)/r.height*H;if(x<0||y<0||x>=W||y>=H)return null;return[Math.floor(y),Math.floor(x)];}
+function clearPv(){const g=$('#sh-pv');if(g)g.innerHTML='';}
+function preview(e){const s=st.cur;const g=$('#sh-pv');if(!g||s.sel==null)return;g.innerHTML='';const rc=cellAt(e);if(!rc)return;const p=piece(s.sel);const v=validAt(p,rc[0],rc[1]);v.cells.forEach(([r,c])=>g.append(sv('rect',{x:c*CS+3,y:r*CS+3,width:CS-6,height:CS-6,rx:6,fill:v.ok?'rgba(61,220,151,.5)':'rgba(255,107,107,.45)'})));}
+function beginPointer(e,pid,fromBoard){if(e.button>0||st.cur.done)return;const s=st.cur;const sx=e.clientX,sy=e.clientY;let dragging=false,ghost=null;const p=piece(pid);
+  const move=ev=>{if(!dragging){if(Math.hypot(ev.clientX-sx,ev.clientY-sy)<8)return;dragging=true;if(fromBoard)p.placed=null;s.sel=pid;renderTile();ghost=h('div',{class:'ghost-drag'});ghost.append(pieceSvg(p.cells,28,p.color));document.body.append(ghost);}
+    ghost.style.left=ev.clientX+'px';ghost.style.top=ev.clientY+'px';preview(ev);};
+  const up=ev=>{window.removeEventListener('pointermove',move);window.removeEventListener('pointercancel',up);if(dragging){ghost.remove();clearPv();const rc=cellAt(ev);if(rc)tryPlace(p,rc[0],rc[1]);else renderTile();}else if(!fromBoard){selectPiece(pid);}};
+  window.addEventListener('pointermove',move);window.addEventListener('pointerup',up,{once:true});window.addEventListener('pointercancel',up,{once:true});}
+/* --- symmetry --- */
+function renderSym(){const s=st.cur,lv=s.lv;const play=$('#sh-play');play.className='play';play.innerHTML='';$('#sh-goal').textContent='Goal: complete the pattern with '+SYMTXT[lv.sym]+'. The darker-bordered cells are fixed; fill the rest so the whole picture is symmetric. Tap a cell to '+(lv.colors>1?'cycle its colour (up to '+lv.colors+').':'fill / empty it.');
+  const n=lv.n;const grid=h('div',{class:'symgrid',style:{gridTemplateColumns:'repeat('+n+',1fr)'},role:'grid','aria-label':'Symmetry grid'});s.errCell=s.errCell||null;
+  for(let r=0;r<n;r++)for(let c=0;c<n;c++){const v=lv.grid[r][c];let cls='sc'+(v?' c'+v:'')+(lv.lock[r][c]?' lock':'');if(lv.sym==='V'&&n%2===0&&c===n/2-1)cls+=' axisR';if(lv.sym==='H'&&n%2===0&&r===n/2-1)cls+=' axisB';if(s.errCell&&s.errCell[0]===r&&s.errCell[1]===c)cls+=' err';
+    grid.append(h('button',{class:cls,'data-r':r,'data-c':c,'aria-label':'Row '+(r+1)+' column '+(c+1)+(lv.lock[r][c]?' fixed':'')+', '+(v?'filled'+(lv.colors>1?' colour '+v:''):'empty'),disabled:lv.lock[r][c]?null:null,'aria-disabled':lv.lock[r][c]?'true':null,onClick:()=>{if(lv.lock[r][c]||s.done)return;lv.grid[r][c]=(lv.grid[r][c]+1)%(lv.colors+1);s.moves++;s.errCell=null;renderSym();}}));}
+  play.append(h('div',null,grid),h('div',null,h('div',{class:'row'},h('button',{class:'btn primary',id:'sh-check',onClick:checkSym},'✔ Check symmetry'),h('button',{class:'btn',id:'sh-hint',onClick:hintSym},'💡 Hint'),h('button',{class:'btn',id:'sh-reset',onClick:()=>{lv.grid=lv.grid.map((row,r)=>row.map((v,c)=>lv.lock[r][c]?v:0));s.errCell=null;renderSym();}},'↺ Reset'))));stat();}
+function symWrong(){const lv=st.cur.lv,bad=[];for(let r=0;r<lv.n;r++)for(let c=0;c<lv.n;c++)if(lv.grid[r][c]!==lv.sol[r][c])bad.push([r,c]);return bad;}
+function checkSym(){const s=st.cur;if(s.done)return;const bad=symWrong();Score.attempt('shape',bad.length===0);if(!bad.length){win('The pattern is perfectly symmetric!');return;}s.wrong++;fb('Not symmetric yet — '+bad.length+' cell'+(bad.length>1?'s':'')+' do not match their mirror image. Compare each side carefully.',false);}
+function hintSym(){const s=st.cur;if(s.done)return;const bad=symWrong();if(!bad.length){fb('It already looks right — press Check!',true);return;}s.hints++;Score.hint('shape');s.errCell=bad[0];fb('💡 The highlighted cell is wrong: compare it with its mirror partner.',true);renderSym();}
+/* --- matrix --- */
+function renderMatrix(){const s=st.cur,lv=s.lv;const play=$('#sh-play');play.className='play';play.innerHTML='';$('#sh-goal').textContent='Goal: find the rule across rows and columns, then choose the shape that completes the matrix.';
+  const g=h('div',{class:'opts',style:{maxWidth:'330px',margin:'0 auto',gridTemplateColumns:'repeat(3,1fr)'}});
+  for(let r=0;r<3;r++)for(let c=0;c<3;c++)g.append(h('div',{class:'opt',style:{cursor:'default'}},r===2&&c===2?h('b',{style:{fontSize:'2rem'}},'?'):glyph(lv.grid[r][c],60)));
+  const opts=h('div',{class:'opts',style:{marginTop:'12px'}});s.dis=s.dis||new Set();
+  lv.opts.forEach((o,k)=>opts.append(h('button',{class:'opt','data-opt':k,'aria-label':'Option '+(k+1),disabled:s.dis.has(k)?true:null,style:s.dis.has(k)?{opacity:.3}:null,onClick:()=>pickOpt(k)},glyph(o,60))));
+  play.append(h('div',null,g,h('h3',{style:{textAlign:'center'}},'Choose the missing piece'),opts),h('div',null,h('div',{class:'row'},h('button',{class:'btn',id:'sh-hint',onClick:hintMatrix},'💡 Hint')),h('div',{id:'sh-hinttext',class:'mute',style:{marginTop:'8px'}},s.htext||''),h('p',{class:'mute'},'The dots in each shape show its colour number (1–3).')));stat();}
+function pickOpt(k){const s=st.cur;if(s.done)return;const ok=st.cur.lv.opts[k].join()===st.cur.lv.ans.join();Score.attempt('shape',ok);if(ok){win('Rule found — that was the missing piece!');return;}s.wrong++;s.dis.add(k);fb('❌ That one breaks the pattern. Look at how the shapes change along each row and column.',false);renderMatrix();}
+function hintMatrix(){const s=st.cur;if(s.done)return;if(s.hints>=3){fb('That is every hint — the rules are shown above.',false);return;}s.hints++;Score.hint('shape');
+  if(s.hints===1)s.htext='Hint 1: follow one row, then one column. What changes each step — turning, colour, or both?';else if(s.hints===2)s.htext='Hint 2 — the rules: '+s.lv.rules.join(' ');else{const wrong=s.lv.opts.map((o,k)=>k).filter(k=>s.lv.opts[k].join()!==s.lv.ans.join()&&!s.dis.has(k));wrong.slice(0,2).forEach(k=>s.dis.add(k));s.htext='Hint 3: two wrong options were removed. Rules: '+s.lv.rules.join(' ');}
+  renderMatrix();}
+BPA.games.shape={open:menu,resume(){const l=S.progress.shape?S.progress.shape.level:0;if(BPA.level('shape',l))play(l,null,true);else menu();},startDaily(pick){play(pick.seed%30,pick);},get state(){return st.cur;},next:nextLevel};
+})();
+/* ===== Game 4: Logic Machine ===== */
+(function(){
+const FAM=['circuit','levers','sequence'];const FNAME={circuit:'Circuit',levers:'Lever Bank',sequence:'Sequence Machine'};const FICON={circuit:'⚡',levers:'🎚️',sequence:'⛓️'};
+const pc=m=>{let c=0;while(m){c+=m&1;m>>=1;}return c;};
+/* ---- circuit ---- */
+const GT=['AND','OR','XOR','NAND','NOR','NOT'];
+function gateEval(t,a,b){switch(t){case'AND':return a&b;case'OR':return a|b;case'XOR':return a^b;case'NAND':return 1-(a&b);case'NOR':return 1-(a|b);default:return 1-a;}}
+function evalCircuit(L,mask){const v=[];for(let i=0;i<L.k;i++)v.push((mask>>i)&1);L.gates.forEach(g=>v.push(gateEval(g.t,v[g.a],g.b==null?0:v[g.b])));return v;}
+function genCircuit(i){const d=Math.floor(i/3);const rng=Rng(2000+i*31);const k=3+Math.floor(d/2),g=3+Math.ceil(d*.7);const cap=d<3?6:d<7?3:2;let best=null;
+  for(let tr=0;tr<1500;tr++){const gates=[];const used=new Set();let ok=true;
+    for(let j=0;j<g;j++){const t=rng.chance(.12)?'NOT':rng.pick(['AND','OR','XOR','NAND','NOR','XOR']);const nodes=k+j;const unused=[];for(let n=0;n<nodes;n++)if(!used.has(n))unused.push(n);
+      const a=unused.length&&rng.chance(.8)?rng.pick(unused):rng.int(0,nodes-1);let b=null;if(t!=='NOT'){b=rng.int(0,nodes-1);let q=0;while(b===a&&q++<20)b=rng.int(0,nodes-1);if(b===a)b=(a+1)%nodes;}
+      gates.push({t,a,b});used.add(a);if(b!=null)used.add(b);}
+    for(let n=0;n<k;n++)if(!used.has(n))ok=false;if(!ok)continue;
+    const sinks=[];for(let j=0;j<g;j++)if(!used.has(k+j))sinks.push(k+j);if(sinks.length<1||sinks.length>3)continue;
+    const L={k,gates,sinks};const planted=rng.int(1,(1<<k)-1);const v=evalCircuit(L,planted);const targets=sinks.map(s=>v[s]);if(!targets.some(x=>x===1))continue;
+    const sols=[];for(let m=0;m<(1<<k);m++){const vv=evalCircuit(L,m);if(sinks.every((s,q)=>vv[s]===targets[q]))sols.push(m);}
+    if(sols.includes(0)||!sols.length)continue;L.targets=targets;L.sols=sols;L.par=Math.min(...sols.map(pc));if(sols.length<=cap){best=L;break;}if(!best||sols.length<best.sols.length)best=L;}
+  if(!best)throw new Error('circuit gen failed');best.type='circuit';return best;}
+/* ---- levers ---- */
+function genLevers(i){const d=Math.floor(i/3);const rng=Rng(3000+i*37);const n=4+Math.floor(d/3);const minP=2+Math.floor(d/3);let best=null;
+  for(let tr=0;tr<800;tr++){const eff=[];for(let j=0;j<n;j++){let m=1<<j;const extra=rng.int(1,d>=3?3:2);for(let q=0;q<extra;q++)m|=1<<rng.int(0,n-1);eff.push(m);}
+    const T=rng.int(1,(1<<n)-2);const press=rng.int(1,(1<<n)-1);let x=0;for(let j=0;j<n;j++)if((press>>j)&1)x^=eff[j];const start=T^x;if(start===T)continue;
+    const need=start^T;let bp=1e9;for(let m=0;m<(1<<n);m++){let y=0;for(let j=0;j<n;j++)if((m>>j)&1)y^=eff[j];if(y===need&&pc(m)<bp)bp=pc(m);}
+    if(bp>=1e9)continue;const L={type:'levers',n,eff,T,start,par:bp};if(bp>=minP){best=L;break;}if(!best||bp>best.par)best=L;}
+  return best;}
+function leverFix(L,cur){const need=cur^L.T;let bm=-1,bp=1e9;for(let m=0;m<(1<<L.n);m++){let y=0;for(let j=0;j<L.n;j++)if((m>>j)&1)y^=L.eff[j];if(y===need&&pc(m)<bp){bp=pc(m);bm=m;}}return{mask:bm,count:bp};}
+/* ---- sequence machine ---- */
+const COMP=[['Breaker','🔌'],['Pump','💧'],['Valve','🚰'],['Boiler','🔥'],['Gear','⚙️'],['Fan','🌀'],['Lamp','💡'],['Latch','🔒']];
+function seqStep(L,s){const out=[];for(let j=0;j<L.n;j++){const a=L.acts[j];if(a.req.every(([c,v])=>((s>>c)&1)===v)){let t=s^(1<<j);if(a.force){const [c,v]=a.force;t=v?t|(1<<c):t&~(1<<c);}out.push([j,t]);}}return out;}
+function seqBfs(L,start,goalFn){const prev=new Map([[start,null]]);const q=[start];let found=null;if(goalFn(start))return[];
+  while(q.length){const s=q.shift();for(const[j,t]of seqStep(L,s)){if(prev.has(t))continue;prev.set(t,[s,j]);if(goalFn(t)){found=t;q.length=0;break;}q.push(t);}}
+  if(found==null)return null;const path=[];let c=found;while(prev.get(c)){const[p,j]=prev.get(c);path.unshift(j);c=p;}return path;}
+function genSeq(i){const d=Math.floor(i/3);const rng=Rng(4000+i*41);const n=4+Math.floor(d/2);let minLen=Math.min(3+d,9);let best=null;
+  for(let tr=0;tr<900;tr++){if(tr>0&&tr%150===0&&minLen>3)minLen--;const names=rng.shuffle(COMP).slice(0,n);const acts=[];
+    for(let j=0;j<n;j++){const req=[];const rc=j===0?0:rng.int(1,2);for(let q=0;q<rc;q++){let c=rng.int(0,n-1);if(c===j)c=(c+1)%n;if(!req.some(r=>r[0]===c))req.push([c,rng.int(0,1)]);}
+      let force=null;if(rng.chance(.4)){let c=rng.int(0,n-1);if(c===j)c=(c+1)%n;force=[c,rng.int(0,1)];}acts.push({req,force});}
+    const L={type:'sequence',n,names,acts};
+    // reachable states
+    const seen=new Set([0]);const q=[0];while(q.length){const s=q.shift();for(const[,t]of seqStep(L,s))if(!seen.has(t)){seen.add(t);q.push(t);}}
+    const arr=[...seen];if(arr.length<6)continue;
+    for(let a=0;a<12;a++){const end=rng.pick(arr);const idx=rng.shuffle([...Array(n).keys()]).slice(0,Math.min(n,rng.int(3,5)));const goal=idx.map(c=>[c,(end>>c)&1]);const gf=s=>goal.every(([c,v])=>((s>>c)&1)===v);
+      const path=seqBfs(L,0,gf);if(!path||path.length<minLen)continue;L.goal=goal;L.par=path.length;L.path=path;best=L;break;}
+    if(best)break;}
+  if(!best)throw new Error('sequence gen failed');return best;}
+const GEN={circuit:genCircuit,levers:genLevers,sequence:genSeq};
+BPA.logicGen=i=>GEN[FAM[i%3]](i);BPA.logicSeq={seqStep,seqBfs};
+/* ---- UI ---- */
+const st={cur:null};const diffOf=i=>{const d=Math.floor(i/3);return d<3?1:d<7?2:3;};
+function menu(){BPA.ctx.daily=null;st.cur=null;const grid=h('div',{class:'lvgrid'});
+  for(let i=0;i<30;i++){const done=G('logic').done[String(i)];const open=BPA.level('logic',i);grid.append(h('button',{class:'btn lv'+(done?' sel':''),'data-level':i,disabled:!open,'aria-label':'Puzzle '+(i+1)+' '+FNAME[FAM[i%3]]+(done?' solved':open?'':' locked'),onClick:()=>play(i)},String(i+1),h('small',null,done?'✓':open?FICON[FAM[i%3]]:'🔒')));}
+  BPA.show(h('div',null,h('h1',null,'⚙️ Logic Machine'),h('p',{class:'mute'},'30 machines: ⚡ circuits (set the switches so the right lamps light), 🎚️ lever banks (levers secretly toggle others) and ⛓️ sequence machines (parts only move when their conditions are met). Solve one to unlock the next.'),grid),{back:BPA.home});}
+function play(i,daily,resume){BPA.ctx.daily=daily||null;if(!resume)Score.play('logic');const L=GEN[FAM[i%3]](i);
+  st.cur={i,L,moves:0,hints:0,wrong:0,done:false,timer:null,cur:L.type==='circuit'?0:L.type==='levers'?L.start:0,known:{},log:[],flash:new Set(),hintTarget:null};
+  BPA.setLast('logic','Puzzle '+(i+1)+' — '+FNAME[FAM[i%3]]);S.progress.logic={level:i};save();render();}
+function nextLevel(){const s=st.cur;if(!s)return;const n=s.i+1;if(n>=30){toast('That was the last puzzle — brilliant!');return menu();}if(!BPA.level('logic',n)){toast('Solve this puzzle to unlock the next one.');return;}play(n);}
+function render(){const s=st.cur,i=s.i,L=s.L;const root=h('div',null,h('h1',null,'Puzzle '+(i+1)+': '+FNAME[L.type===('circuit')?'circuit':L.type]),h('div',{class:'row'},BPA.diffBadge(diffOf(i)),h('span',{class:'chip',id:'lg-moves'},'Moves: 0'),h('span',{class:'chip',id:'lg-hints'},'Hints: 0'),h('span',{id:'lg-timer'})),
+   h('p',{class:'mute',id:'lg-goal'}),h('div',{id:'lg-main'}),h('div',{class:'row',style:{marginTop:'10px'}},h('button',{class:'btn',id:'lg-hint',onClick:hint},'💡 Hint'),h('button',{class:'btn',id:'lg-reset',onClick:reset},'↺ Reset')),h('div',{class:'fb',id:'lg-fb','aria-live':'polite'}),h('ol',{class:'log',id:'lg-log'}));
+  BPA.show(root,{back:menu,restart:()=>play(i,BPA.ctx.daily),next:()=>nextLevel()});
+  if(isChallenge()){s.timer=BPA.makeTimer($('#lg-timer'),60+Math.floor(i/3)*20+30,()=>fb('⏱ Time is up — no penalty. Only the time bonus is gone.',true));}
+  draw();}
+function fb(m,ok){const e=$('#lg-fb');if(e){e.textContent=m;e.className='fb '+(ok?'ok':'bad');}}
+function note(t){const s=st.cur;s.log.unshift(t);s.log=s.log.slice(0,12);const l=$('#lg-log');if(l){l.innerHTML='';s.log.forEach(x=>l.append(h('li',null,x)));}}
+function stats(){const m=$('#lg-moves');if(m)m.textContent='Moves: '+st.cur.moves;const hh=$('#lg-hints');if(hh)hh.textContent='Hints: '+st.cur.hints;}
+function reset(){const s=st.cur;if(s.done)return;s.cur=s.L.type==='levers'?s.L.start:0;s.hintTarget=null;s.flash=new Set();fb('Machine reset to its starting state'+(s.L.type!=='circuit'?' (what you learned is kept)':'')+'.',true);draw();}
+function draw(){const s=st.cur;({circuit:drawCircuit,levers:drawLevers,sequence:drawSeq})[s.L.type]();stats();}
+function win(explain){const s=st.cur;if(s.done)return;s.done=true;let gone=false;BPA.onLeave(()=>{gone=true;});if(s.timer)s.timer.stop();const sc=Score.award('logic',String(s.i),{diff:diffOf(s.i),wrong:s.wrong,hints:s.hints,par:s.L.par,moves:s.moves,timeFrac:s.timer?s.timer.frac():null});S.progress.logic={level:Math.min(29,s.i+1)};save();
+  const delay=(document.documentElement.dataset.motion==='reduce')?0:400;setTimeout(()=>!gone&&BPA.result({title:'Machine solved! ⚙️',emoji:'🏆',text:'All targets reached in '+s.moves+' move'+(s.moves===1?'':'s')+' (par '+s.L.par+').',score:sc,lines:sc.lines,extraHtml:'<h3>How it works</h3>'+explain,onMenu:menu,onReplay:()=>play(s.i,null),onNext:s.i<29?()=>nextLevel():null,menuLabel:'Puzzles'}),delay);}
+/* circuit drawing */
+function circuitLayout(L){const layer=Array(L.k+L.gates.length).fill(0);L.gates.forEach((g,j)=>{layer[L.k+j]=1+Math.max(layer[g.a],g.b==null?0:layer[g.b]);});const maxL=Math.max(...layer);const cols=[];for(let l=0;l<=maxL;l++)cols.push([]);layer.forEach((l,n)=>cols[l].push(n));
+  const rows=Math.max(...cols.map(c=>c.length));const H=rows*76+30,W=(maxL+1)*120+150;const pos={};cols.forEach((c,l)=>c.forEach((n,r)=>{pos[n]={x:50+l*120,y:15+(H-30)*(r+.5)/c.length};}));return{pos,W,H};}
+function drawCircuit(){const s=st.cur,L=s.L;const main=$('#lg-main');main.innerHTML='';$('#lg-goal').textContent='Goal: flip the input switches (S) so every lamp matches its goal — lit where it says ON, dark where it says OFF. Tap a switch to flip it and watch the signal travel.';
+  const v=evalCircuit(L,s.cur);const{pos,W,H}=circuitLayout(L);const svg=sv('svg',{viewBox:'0 0 '+W+' '+H,style:'min-width:'+Math.min(W,720)+'px;width:100%;max-width:'+Math.max(W,720)+'px;display:block',role:'group','aria-label':'Circuit diagram'});
+  L.gates.forEach((g,j)=>{const n=L.k+j,p=pos[n];[[g.a,g.b==null?0:-8],[g.b,8]].forEach(([src,dy],q)=>{if(src==null)return;const sp=pos[src];const x1=sp.x+(src<L.k?18:36),y1=sp.y,x2=p.x-36,y2=p.y+(g.b==null?0:(q===0?-8:8));svg.append(sv('path',{class:'wire'+(v[src]?' on':''),d:'M'+x1+' '+y1+' C'+(x1+40)+' '+y1+' '+(x2-40)+' '+y2+' '+x2+' '+y2}));});});
+  for(let n=0;n<L.k;n++){const p=pos[n];svg.append(sv('g',{'data-sw':n,tabindex:'0',role:'button','aria-pressed':v[n]?'true':'false','aria-label':'Switch S'+(n+1)+' '+(v[n]?'on':'off'),style:'cursor:pointer',onClick:()=>toggle(n),onKeydown:e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle(n);}}},
+    sv('circle',{cx:p.x,cy:p.y,r:18,fill:v[n]?'var(--a4)':'var(--card2)',stroke:s.hintTarget===n?'var(--a5)':'var(--line)','stroke-width':s.hintTarget===n?5:3}),sv('text',{class:'svgtxt',x:p.x,y:p.y,style:v[n]?'fill:#06210f':''},'S'+(n+1)),sv('text',{class:'svgtxt',x:p.x,y:p.y+30},v[n]?'ON':'OFF')));}
+  L.gates.forEach((g,j)=>{const n=L.k+j,p=pos[n];svg.append(sv('g',null,sv('rect',{class:'gate',x:p.x-36,y:p.y-20,width:72,height:40,rx:10,style:s.flash.has(n)?'stroke:var(--a5);stroke-width:4':''}),sv('text',{class:'svgtxt',x:p.x,y:p.y-4},g.t),sv('text',{class:'svgtxt',x:p.x,y:p.y+11,style:'fill:'+(v[n]?'var(--a4)':'var(--mute)')},'→ '+v[n])));});
+  L.sinks.forEach((sn,q)=>{const p=pos[sn];const lit=v[sn]===1,ok=v[sn]===L.targets[q];svg.append(sv('path',{class:'wire'+(lit?' on':''),d:'M'+(p.x+36)+' '+p.y+' L'+(p.x+66)+' '+p.y}),sv('circle',{cx:p.x+84,cy:p.y,r:17,fill:lit?'var(--a5)':'var(--card2)',stroke:ok?'var(--ok)':'var(--bad)','stroke-width':4}),sv('text',{class:'svgtxt',x:p.x+84,y:p.y},lit?'💡':'●'),sv('text',{class:'svgtxt',x:p.x+84,y:p.y+30},'goal '+(L.targets[q]?'ON':'OFF')+(ok?' ✓':'')));});
+  main.append(h('div',{style:{overflowX:'auto'}},svg));}
+function toggle(n){const s=st.cur,L=s.L;if(s.done)return;const before=evalCircuit(L,s.cur);s.cur^=1<<n;s.moves++;s.hintTarget=null;const after=evalCircuit(L,s.cur);s.flash=new Set();const ch=[];after.forEach((x,k)=>{if(k>=L.k&&x!==before[k]){s.flash.add(k);ch.push(L.gates[k-L.k].t+'#'+(k-L.k+1)+'→'+x);}});
+  const lamps=L.sinks.map((sn,q)=>after[sn]===L.targets[q]);note('Switch S'+(n+1)+' → '+(after[n]?'ON':'OFF')+'. '+(ch.length?'Changed: '+ch.join(', ')+'.':'No gate output changed.')+' Lamps matching: '+lamps.filter(Boolean).length+'/'+lamps.length+'.');
+  fb(ch.length?'Signal change: '+ch.join(', '):'That switch changed nothing downstream right now — other gates are blocking it.',true);drawCircuit();stats();
+  if(lamps.every(Boolean)){const lines=L.gates.map((g,j)=>{const n2=L.k+j;return 'Gate '+(j+1)+' = '+g.t+'('+nodeName(L,g.a,after)+(g.b!=null?', '+nodeName(L,g.b,after):'')+') = '+after[n2];});Score.attempt('logic',true);
+    win('<p>Switches ON: '+[...Array(L.k).keys()].filter(x=>(s.cur>>x)&1).map(x=>'S'+(x+1)).join(', ')+' (all others OFF).</p><ul>'+lines.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>');}}
+function nodeName(L,n,v){return(n<L.k?'S'+(n+1):'G'+(n-L.k+1))+'='+v[n];}
+/* levers */
+function drawLevers(){const s=st.cur,L=s.L;const main=$('#lg-main');main.innerHTML='';$('#lg-goal').textContent='Goal: make the lamps match the target row. Each lever flips its own lamp — and secretly some others. Press levers to learn the wiring; pressing a lever twice cancels it.';
+  const tgt=h('div',{class:'row'},h('b',null,'Target:'),[...Array(L.n).keys()].map(j=>h('span',{class:'chip'},String.fromCharCode(65+j)+' '+(((L.T>>j)&1)?'🟢':'⚫'))));
+  const grid=h('div',{class:'grid',style:{gridTemplateColumns:'repeat(auto-fill,minmax(88px,1fr))',marginTop:'10px'}});
+  for(let j=0;j<L.n;j++){const on=(s.cur>>j)&1;grid.append(h('button',{class:'lever'+(s.flash.has(j)?' flash':'')+(s.hintTarget===j?' hint':''),'data-lever':j,'aria-label':'Lever '+String.fromCharCode(65+j)+', lamp '+(on?'on':'off'),onClick:()=>pressLever(j)},h('span',{class:'lamp'},on?'🟢':'⚫'),h('b',null,'Lever '+String.fromCharCode(65+j)),h('small',{class:'mute'},s.known[j]!=null?'toggles '+nameMask(L.eff[j]):'effect unknown')));}
+  const known=Object.keys(s.known).length;main.append(tgt,grid,h('p',{class:'mute'},'Wiring discovered: '+known+'/'+L.n));}
+const nameMask=m=>{const a=[];for(let j=0;j<12;j++)if((m>>j)&1)a.push(String.fromCharCode(65+j));return a.join('+');};
+function pressLever(j){const s=st.cur,L=s.L;if(s.done)return;const before=s.cur;s.cur^=L.eff[j];s.moves++;s.hintTarget=null;s.known[j]=1;const ch=before^s.cur;s.flash=new Set();for(let k=0;k<L.n;k++)if((ch>>k)&1)s.flash.add(k);
+  note('Lever '+String.fromCharCode(65+j)+' flipped lamps: '+nameMask(ch)+'.');fb('Lever '+String.fromCharCode(65+j)+' flipped lamps '+nameMask(ch)+'.',true);drawLevers();stats();
+  if(s.cur===L.T){Score.attempt('logic',true);const fix=leverFix(L,L.start);win('<p>Shortest solution from the start: press '+nameMask(fix.mask)+' (each once, order does not matter, since pressing twice cancels).</p><p>Wiring: '+[...Array(L.n).keys()].map(k=>'Lever '+String.fromCharCode(65+k)+' → '+nameMask(L.eff[k])).join('; ')+'.</p>');}}
+/* sequence */
+function drawSeq(){const s=st.cur,L=s.L;const main=$('#lg-main');main.innerHTML='';$('#lg-goal').textContent='Goal: reach the goal states below. Each part can be switched only when its requirements are met — and switching one part may force another. Work out the right order.';
+  const gl=h('div',{class:'row'},h('b',null,'Goal:'),L.goal.map(([c,v])=>{const ok=((s.cur>>c)&1)===v;return h('span',{class:'chip'+(ok?' ok':'')},L.names[c][1]+' '+L.names[c][0]+' '+(v?'ON':'OFF')+(ok?' ✓':''));}));
+  const grid=h('div',{class:'grid',style:{gridTemplateColumns:'repeat(auto-fill,minmax(150px,1fr))',marginTop:'10px'}});
+  for(let j=0;j<L.n;j++){const a=L.acts[j];const on=(s.cur>>j)&1;const met=a.req.every(([c,v])=>((s.cur>>c)&1)===v);
+    grid.append(h('button',{class:'lever'+(met?'':' locked')+(s.flash.has(j)?' flash':'')+(s.hintTarget===j?' hint':''),'data-part':j,'aria-label':L.names[j][0]+' is '+(on?'on':'off')+(met?'':', locked'),onClick:()=>moveSeq(j)},h('span',{class:'lamp'},L.names[j][1]),h('b',null,L.names[j][0]+': '+(on?'ON':'OFF')),
+      h('small',null,a.req.length?a.req.map(([c,v])=>h('span',{style:{display:'block',color:((s.cur>>c)&1)===v?'var(--ok)':'var(--bad)'}},'Needs '+L.names[c][0]+' '+(v?'ON':'OFF'))):h('span',{class:'mute'},'No requirements')),h('small',{class:'mute'},met?'Tap to switch '+(on?'OFF':'ON'):'🔒 locked')));}
+  main.append(gl,grid);}
+function moveSeq(j){const s=st.cur,L=s.L;if(s.done)return;const a=L.acts[j];const unmet=a.req.filter(([c,v])=>((s.cur>>c)&1)!==v);
+  if(unmet.length){s.wrong++;fb('🔒 '+L.names[j][0]+' cannot move yet: it needs '+unmet.map(([c,v])=>L.names[c][0]+' '+(v?'ON':'OFF')).join(' and ')+'.',false);return;}
+  const before=s.cur;let t=s.cur^(1<<j);let forced=null;if(a.force){const[c,v]=a.force;const nv=v?t|(1<<c):t&~(1<<c);if(nv!==t)forced=c;t=nv;}s.cur=t;s.moves++;s.hintTarget=null;s.flash=new Set([j]);if(forced!=null)s.flash.add(forced);
+  const msg=L.names[j][0]+' switched '+((s.cur>>j)&1?'ON':'OFF')+(forced!=null?' — and it forced '+L.names[forced][0]+' '+((s.cur>>forced)&1?'ON':'OFF')+'!':'.');note(msg);fb(msg,true);drawSeq();stats();
+  const done=L.goal.every(([c,v])=>((s.cur>>c)&1)===v);if(done){Score.attempt('logic',true);const steps=L.path.map((p,k)=>{const rq=L.acts[p].req.map(([c,v])=>L.names[c][0]+' '+(v?'ON':'OFF')).join(' & ');return(k+1)+'. '+L.names[p][0]+(rq?' (needs '+rq+')':'');});win('<p>A shortest order ('+L.path.length+' moves):</p><ol>'+steps.map(x=>'<li>'+esc(x.replace(/^\d+\. /,''))+'</li>').join('')+'</ol>');}}
+/* hints */
+function hint(){const s=st.cur,L=s.L;if(s.done)return;s.hints++;Score.hint('logic');
+  if(L.type==='circuit'){let bm=null,bd=1e9;L.sols.forEach(m=>{const d=pc(m^s.cur);if(d<bd){bd=d;bm=m;}});if(bd===0){fb('Everything matches already!',true);}else{const diff=bm^s.cur;let k=0;while(!((diff>>k)&1))k++;s.hintTarget=k;fb('💡 Switch S'+(k+1)+' should be '+((bm>>k)&1?'ON':'OFF')+' in a working setting ('+bd+' switch'+(bd>1?'es':'')+' still to change).',true);drawCircuit();}}
+  else if(L.type==='levers'){const fx=leverFix(L,s.cur);if(fx.count===0)return fb('The lamps already match!',true);if(s.hints%2===1){fb('💡 From the current state the shortest fix needs '+fx.count+' lever press'+(fx.count>1?'es':'')+'. Each lever needs pressing at most once.',true);}else{let k=0;while(!((fx.mask>>k)&1))k++;s.hintTarget=k;fb('💡 Lever '+String.fromCharCode(65+k)+' is part of the shortest fix.',true);drawLevers();}}
+  else{const goalFn=x=>L.goal.every(([c,v])=>((x>>c)&1)===v);const path=seqBfs(L,s.cur,goalFn);if(!path||!path.length){fb('Nothing more to do — goals met!',true);}else if(s.hints%2===1){const locked=[...Array(L.n).keys()].filter(j=>L.acts[j].req.some(([c,v])=>((s.cur>>c)&1)!==v));fb('💡 Look at the red "Needs" lines: they tell you what must change first. The shortest route from here takes '+path.length+' move'+(path.length>1?'s':'')+'.',true);}else{s.hintTarget=path[0];fb('💡 A useful next move: switch '+L.names[path[0]][0]+'.',true);drawSeq();}}
+  stats();}
+BPA.games.logic={open:menu,resume(){const l=S.progress.logic?S.progress.logic.level:0;if(BPA.level('logic',l))play(l,null,true);else menu();},startDaily(pick){play(pick.seed%30,pick);},get state(){return st.cur;},next:nextLevel};
+})();
+/* ===== Game 5: Brain Battle (two players, one device) ===== */
+(function(){
+const CATS=[{id:'pattern',n:'Pattern Recognition',e:'🔢'},{id:'logic',n:'Logical Deduction',e:'🧠'},{id:'word',n:'Word Challenge',e:'🔤'},{id:'math',n:'Mental Arithmetic',e:'➕'},{id:'visual',n:'Visual Puzzle',e:'👁️'}];
+const WORDS=['planet','garden','rocket','pencil','castle','bridge','jungle','mirror','window','silver','dragon','forest','island','guitar','puzzle','thunder','whisper','monkey','pirate','magnet'];
+const SETS=[['Apple','Mango','Grape','Peach','Lemon'],['Tiger','Zebra','Eagle','Whale','Panda'],['Mars','Venus','Saturn','Neptune','Mercury'],['Piano','Violin','Drums','Flute','Guitar'],['Chess','Ludo','Poker','Carrom','Bingo'],['Paris','Cairo','Tokyo','Lima','Delhi']];
+const SETN=['fruits','animals','planets','instruments','games','cities'];
+const PAIRS=[['🔵','🟣'],['🕐','🕑'],['🟥','🟧'],['🌑','🌒'],['😀','😃'],['⬛','🔲'],['🔺','🔻'],['🟢','🟩']];
+const NAMES3=['Asha','Ben','Chloe','Dev','Elena','Farid','Gia','Hugo'];
+function opts(rng,ans,pool){const s=new Set([String(ans)]);const o=[String(ans)];for(const x of pool){if(!s.has(String(x))&&o.length<4){s.add(String(x));o.push(String(x));}}let k=1;while(o.length<4){const x=ans+k*(k%2?1:-1)*rng.int(1,3);k++;if(!s.has(String(x))){s.add(String(x));o.push(String(x));}}const sh=rng.shuffle(o);return{options:sh,answer:sh.indexOf(String(ans))};}
+function qPattern(rng){const t=rng.int(0,4);let seq=[],rule='';const a=rng.int(1,9);
+  if(t===0){const d=rng.int(2,7);for(let i=0;i<6;i++)seq.push(a+d*i);rule='add '+d+' each step';}
+  else if(t===1){const r=rng.int(2,3);for(let i=0;i<6;i++)seq.push(a*Math.pow(r,i));rule='multiply by '+r+' each step';}
+  else if(t===2){for(let i=0;i<6;i++)seq.push((a+i)*(a+i));rule='square numbers ('+a+'², '+(a+1)+'², …)';}
+  else if(t===3){let d=rng.int(1,3);seq=[a];for(let i=1;i<6;i++){seq.push(seq[i-1]+d);d++;}rule='the step grows by 1 each time';}
+  else{const b=rng.int(1,5);seq=[a,b];for(let i=2;i<6;i++)seq.push(seq[i-1]+seq[i-2]);rule='each number is the sum of the two before';}
+  const ans=seq[5];const o=opts(rng,ans,[ans+1,ans-1,ans+2,ans-2,seq[4]+seq[4]-seq[3]]);
+  return{kind:'choice',prompt:'What comes next?  '+seq.slice(0,5).join(', ')+', ?',options:o.options,answer:o.answer,explain:'Rule: '+rule+' → '+ans+'.'};}
+function qLogic(rng){const n=rng.int(3,4);const ppl=rng.shuffle(NAMES3).slice(0,n);const rel=rng.pick([['taller','shorter','tallest','shortest'],['faster','slower','fastest','slowest'],['older','younger','oldest','youngest']]);
+  const order=ppl.slice();// order[0] is greatest
+  const stmts=[];for(let i=0;i<n-1;i++){stmts.push(rng.chance(.5)?order[i]+' is '+rel[0]+' than '+order[i+1]+'.':order[i+1]+' is '+rel[1]+' than '+order[i]+'.');}
+  const q=rng.int(0,2);let ans,text;if(q===0){ans=order[0];text='Who is the '+rel[2]+'?';}else if(q===1){ans=order[n-1];text='Who is the '+rel[3]+'?';}else{ans=order[1];text='Who is second '+(rng.chance(.5)?'':'')+rel[2]+'?';}
+  const sh=rng.shuffle(order);return{kind:'choice',prompt:rng.shuffle(stmts).join(' ')+'  '+text,options:sh,answer:sh.indexOf(ans),explain:'Chain them: '+order.join(' > ')+' (greatest to least) → '+ans+'.'};}
+function scramble(rng,w){let s;do{s=rng.shuffle(w.split('')).join('');}while(s===w);return s;}
+function qWord(rng){if(rng.chance(.55)){const w=rng.pick(WORDS);const others=rng.shuffle(WORDS.filter(x=>x!==w)).slice(0,3);const sh=rng.shuffle([w].concat(others));return{kind:'choice',prompt:'Unscramble the letters:  '+scramble(rng,w).toUpperCase(),options:sh.map(x=>x.toUpperCase()),answer:sh.indexOf(w),explain:'The letters spell '+w.toUpperCase()+'.'};}
+  const si=rng.int(0,SETS.length-1);let sj=rng.int(0,SETS.length-1);while(sj===si)sj=rng.int(0,SETS.length-1);const three=rng.shuffle(SETS[si]).slice(0,3);const odd=rng.pick(SETS[sj]);const all=rng.shuffle(three.concat([odd]));
+  return{kind:'choice',prompt:'Which word does not belong with the others?',options:all,answer:all.indexOf(odd),explain:three.join(', ')+' are '+SETN[si]+'; '+odd+' is one of the '+SETN[sj]+'.'};}
+function qMath(rng){const t=rng.int(0,2);let txt,ans,wrong;const a=rng.int(2,12),b=rng.int(2,9),c=rng.int(2,9),d=rng.int(1,15);
+  if(t===0){txt=a+' + '+b+' × '+c;ans=a+b*c;wrong=[(a+b)*c];}else if(t===1){txt='('+a+' + '+b+') × '+c+' − '+d;ans=(a+b)*c-d;wrong=[a+b*c-d];}else{txt=a+' × '+b+' − '+c+' × 2';ans=a*b-c*2;wrong=[(a*b-c)*2];}
+  const o=opts(rng,ans,wrong.concat([ans+10,ans-10,ans+1,ans-1]));return{kind:'choice',prompt:'Calculate:  '+txt,options:o.options,answer:o.answer,explain:txt+' = '+ans+' (multiplication before addition/subtraction).'};}
+function qVisual(rng){if(rng.chance(.5)){const p=rng.pick(PAIRS);const idx=rng.int(0,24);const cells=Array(25).fill(p[0]);cells[idx]=p[1];return{kind:'grid',prompt:'Tap the tile that is different from all the others.',cells,answer:idx,explain:'Only one tile is '+p[1]+'; the rest are '+p[0]+'.'};}
+  const set=['🔺','🟦','⭐'];const cells=[];for(let i=0;i<20;i++)cells.push(rng.pick(set));const tgt=rng.pick(set);const cnt=cells.filter(x=>x===tgt).length;const o=opts(rng,cnt,[cnt+1,cnt-1,cnt+2,cnt-2]);
+  return{kind:'choice',prompt:'How many '+tgt+' are in the picture?',display:cells,options:o.options,answer:o.answer,explain:'There are '+cnt+' of '+tgt+'.'};}
+const QG={pattern:qPattern,logic:qLogic,word:qWord,math:qMath,visual:qVisual};
+BPA.battleGen=(cat,seed)=>QG[cat](Rng(seed));
+const st={m:null,setup:{N:3,timer:false}};
+
+function setup(){BPA.ctx.daily=null;st.m=null;const n1=h('input',{type:'text',id:'bt-n1',maxlength:14,'aria-label':'Player 1 name',value:S.names[0]}),n2=h('input',{type:'text',id:'bt-n2',maxlength:14,'aria-label':'Player 2 name',value:S.names[1]});
+  const ns=h('select',{id:'bt-n','aria-label':'Match length'},[3,5].map(v=>{const o=h('option',{value:v},'Best of '+v);if(st.setup.N===v)o.selected=true;return o;}));const tm=h('input',{type:'checkbox',id:'bt-timer','aria-label':'Use question timers'});tm.checked=st.setup.timer;
+  const hist=S.history.slice(0,6);
+  BPA.show(h('div',null,h('h1',null,'⚔️ Brain Battle'),h('p',{class:'mute'},'Two players, one device. Each round has two questions in one category. Both players answer the same questions — alternating who goes first — and answers stay hidden until both are done. Most correct answers wins the round.'),
+    h('div',{class:'card'},h('div',{class:'field'},h('label',{for:'bt-n1'},'Player 1'),n1),h('div',{class:'field'},h('label',{for:'bt-n2'},'Player 2'),n2),h('div',{class:'field'},h('label',{for:'bt-n'},'Match length'),ns),
+      h('div',{class:'field'},h('div',null,h('b',null,'Question timers (20 s)'),h('div',{class:'mute'},'Off by default. If time runs out, that question counts as unanswered.')),tm),
+      h('button',{class:'btn primary',id:'bt-start',style:{marginTop:'12px'},onClick:()=>{S.names=[(n1.value.trim()||'Player 1').slice(0,14),(n2.value.trim()||'Player 2').slice(0,14)];if(S.names[0]===S.names[1])S.names[1]+=' 2';st.setup.N=+ns.value;st.setup.timer=tm.checked;save();startMatch();}},'▶ Start match')),
+    h('h2',{class:'sect'},'📜 Recent matches'),hist.length?h('div',{class:'card'},h('table',{class:'stats'},h('tbody',null,hist.map(x=>h('tr',null,h('td',null,new Date(x.t).toLocaleDateString()),h('td',null,x.names[0]+' '+x.wins[0]+' – '+x.wins[1]+' '+x.names[1]),h('td',null,x.winner<0?'Draw':'🏆 '+x.names[x.winner]),h('td',null,'Bo'+x.N)))))):h('p',{class:'mute'},'No matches yet — play one!')),{back:BPA.home});}
+function startMatch(){Score.play('battle');const N=st.setup.N;const cats=Rng(newSeed()).shuffle(CATS.map(c=>c.id));st.m={names:S.names.slice(),N,rtw:Math.ceil(N/2),wins:[0,0],draws:0,round:0,cats,rounds:[],timer:st.setup.timer,cur:null,done:false};BPA.setLast('battle','Match in setup');S.progress.battle=null;nextRound();}
+function nextRound(){const m=st.m;const catId=m.cats[m.round%5];const rng=Rng(newSeed());const cat=CATS.find(c=>c.id===catId);const qs=[QG[catId](rng),QG[catId](rng)];
+  m.cur={cat,qs,ans:[[null,null],[null,null]],order:m.round%2===0?[0,1]:[1,0],step:0,qi:0};handoff();}
+const score=m=>h('div',{class:'score'},[0,1].map(p=>h('div',{class:'p'+(m.cur&&m.cur.order[m.cur.step]===p&&m.phase==='q'?' turn':'')},h('div',{class:'mute'},m.names[p]),h('div',{style:{fontSize:'2rem',fontWeight:800}},m.wins[p]),h('div',{class:'mute'},'rounds won'))));
+function navs(extra){return Object.assign({back:()=>BPA.confirm('Leave this match? Its progress will be lost.',setup),restart:()=>BPA.confirm('Restart the match from round 1?',()=>startMatch())},extra||{});}
+function handoff(){const m=st.m,c=m.cur;m.phase='h';const p=c.order[c.step];const first=c.step===0;
+  BPA.show(h('div',null,h('h1',null,'Round '+(m.round+1)+(m.round>=m.N?' (tie-break)':'')+' — '+c.cat.e+' '+c.cat.n),score(m),
+    h('div',{class:'card',style:{textAlign:'center',marginTop:'14px'}},h('div',{class:'big-emo'},p===0?'🟣':'🟠'),h('h2',{id:'bt-turn'},m.names[p]+', you are up!'),h('p',{class:'mute'},first?'You answer first this round. Same questions for both players.':'Same questions as '+m.names[c.order[0]]+' had — answers are still hidden.'),h('p',{class:'mute'},'Best of '+m.N+' — first to '+m.rtw+' rounds wins. Pass the device to '+m.names[p]+' and press Ready.'),
+      h('button',{class:'btn primary',id:'bt-ready',onClick:()=>question()},'✔ Ready'))),navs());}
+function question(){const m=st.m,c=m.cur;m.phase='q';const p=c.order[c.step];const q=c.qs[c.qi];
+  const root=h('div',null,h('h1',null,c.cat.e+' '+c.cat.n),score(m),h('div',{class:'row sp',style:{marginTop:'10px'}},h('b',{id:'bt-who'},m.names[p]+' — question '+(c.qi+1)+' of 2'),h('span',{id:'bt-tm'})),
+    h('div',{class:'card',style:{marginTop:'8px'}},h('div',{class:'bq',id:'bt-q'},q.prompt),q.display?h('div',{class:'oddgrid',style:{fontSize:'1.6rem',gridTemplateColumns:'repeat(5,1fr)',textAlign:'center'}},q.display.map(x=>h('span',null,x))):null,
+      q.kind==='grid'?h('div',{class:'oddgrid'},q.cells.map((x,i)=>h('button',{class:'btn','data-cell':i,'aria-label':'Tile '+(i+1),onClick:()=>answer(i)},x))):h('div',{class:'bopts'},q.options.map((o,i)=>h('button',{class:'btn','data-opt':i,onClick:()=>answer(i)},o)))),
+    h('p',{class:'mute'},'Your answer is locked in when you tap — correctness stays hidden until both players have answered.'));
+  BPA.show(root,navs());
+  let live=true;BPA.onLeave(()=>{live=false;});
+  if(m.timer){const t=BPA.makeTimer($('#bt-tm'),20,()=>setTimeout(()=>{if(live)answer(null);},400));}}
+let busy=false;
+function answer(i){if(busy)return;busy=true;const m=st.m,c=m.cur;const p=c.order[c.step];const q=c.qs[c.qi];c.ans[p][c.qi]=i;Score.attempt('battle',i!=null&&i===q.answer);
+  const root=$('#view');root.querySelectorAll('button').forEach(b=>b.disabled=true);const msg=h('p',{class:'fb ok',role:'status'},i==null?'⏱ Time up — no answer recorded.':'🔒 Answer locked in!');root.append(msg);
+  let dead=false;BPA.onLeave(()=>{dead=true;busy=false;});
+  setTimeout(()=>{if(dead||st.m!==m)return;busy=false;if(c.qi===0){c.qi=1;question();}else{c.qi=0;if(c.step===0){c.step=1;handoff();}else reveal();}},650);}
+function reveal(){const m=st.m,c=m.cur;m.phase='r';const cor=[0,1].map(p=>c.qs.filter((q,k)=>c.ans[p][k]===q.answer).length);
+  const rw=cor[0]>cor[1]?0:cor[1]>cor[0]?1:-1;if(rw>=0)m.wins[rw]++;else m.draws++;m.rounds.push({cat:c.cat.id,cor,winner:rw});m.round++;
+  const decided=m.wins[0]>=m.rtw||m.wins[1]>=m.rtw||(m.round>=m.N&&m.wins[0]!==m.wins[1])||m.round>=m.N+3;
+  const ansText=(q,a)=>a==null?'—':q.kind==='grid'?'tile '+(a+1):q.options[a];
+  const rows=c.qs.map((q,k)=>h('div',{class:'card',style:{marginBottom:'8px'}},h('b',null,'Q'+(k+1)+': '+q.prompt),h('p',null,'✅ Correct: ',h('b',null,ansText(q,q.answer))),
+    h('p',null,[0,1].map(p=>h('span',{class:'chip'+(c.ans[p][k]===q.answer?' ok':''),style:{marginRight:'6px'}},m.names[p]+': '+ansText(q,c.ans[p][k])+(c.ans[p][k]===q.answer?' ✓':' ✗')))),h('p',{class:'mute'},q.explain)));
+  const res=rw>=0?'🏅 '+m.names[rw]+' wins the round ('+cor[rw]+'–'+cor[1-rw]+')':'🤝 Round drawn ('+cor[0]+'–'+cor[1]+')';
+  BPA.show(h('div',null,h('h1',null,'Round '+m.round+' result'),score(m),h('h2',{id:'bt-roundres',style:{textAlign:'center'}},res),rows,
+    h('button',{class:'btn primary',id:'bt-next',onClick:()=>decided?finish():nextRound()},decided?'🏆 See match result':'Next round ▶')),navs({next:()=>decided?finish():nextRound()}));}
+function finish(){const m=st.m;m.done=true;m.phase='f';const winner=m.wins[0]>m.wins[1]?0:m.wins[1]>m.wins[0]?1:-1;
+  S.history.unshift({t:Date.now(),names:m.names.slice(),wins:m.wins.slice(),winner,N:m.N});S.history=S.history.slice(0,20);
+  Score.raw('battle','m'+Date.now(),30);
+  BPA.show(h('div',null,h('h1',null,'Match result'),score(m),h('div',{class:'card',style:{textAlign:'center'}},h('div',{class:'big-emo'},winner<0?'🤝':'🏆'),h('h2',{id:'bt-winner'},winner<0?'It is a draw — perfectly matched!':m.names[winner]+' wins the match!'),h('p',{class:'mute'},m.names[0]+' '+m.wins[0]+' – '+m.wins[1]+' '+m.names[1]+(m.draws?' ('+m.draws+' drawn round'+(m.draws>1?'s':'')+')':''))),
+    h('div',{class:'card',style:{marginTop:'10px'}},h('h3',null,'Rounds'),m.rounds.map((r,i)=>h('p',null,'Round '+(i+1)+' — '+CATS.find(c=>c.id===r.cat).e+' '+CATS.find(c=>c.id===r.cat).n+': '+m.names[0]+' '+r.cor[0]+' / '+m.names[1]+' '+r.cor[1]+' → '+(r.winner<0?'draw':m.names[r.winner])))),
+    h('div',{class:'row',style:{marginTop:'12px'}},h('button',{class:'btn primary',id:'bt-rematch',onClick:()=>startMatch()},'↻ Rematch'),h('button',{class:'btn',id:'bt-setup',onClick:setup},'Change settings'),h('button',{class:'btn',onClick:BPA.home},'🏠 Home'))),{back:setup,restart:()=>startMatch()});}
+BPA.games.battle={open:setup,resume:setup,get state(){return st.m;},CATS};
+})();
+try{boot();}catch(err){document.getElementById('view').textContent='Startup error: '+err.message;console.error(err);}
+</script>
+</body>
+</html>
