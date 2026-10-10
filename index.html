@@ -180,6 +180,7 @@ input[type=checkbox]{width:26px;height:26px}
 <a class="sr" href="#view">Skip to content</a>
 <header id="top">
   <div class="brand">🧠 <span>BrainPlay Arena</span></div>
+  <button class="btn" id="nb-help" aria-label="How to play">❓<span class="lbl">Help</span></button>
   <button class="btn" id="nb-home" aria-label="Home">🏠<span class="lbl">Home</span></button>
   <button class="btn" id="nb-back" aria-label="Back">◀<span class="lbl">Back</span></button>
   <button class="btn" id="nb-restart" aria-label="Restart">↻<span class="lbl">Restart</span></button>
@@ -211,7 +212,7 @@ const sleepless=fn=>setTimeout(fn,0);
 
 /* ---------- storage ---------- */
 const STORE_KEY='brainplay.arena.v1';
-function defaults(){return{v:1,settings:{theme:'dark',contrast:false,motion:'auto',mode:'relaxed',unlockAll:false},games:{},ach:{},daily:{last:null,streak:0,best:0,total:0},history:[],points:0,perfect:0,last:null,progress:{},names:['Player 1','Player 2']};}
+function defaults(){return{v:1,settings:{theme:'dark',contrast:false,motion:'auto',mode:'relaxed',unlockAll:false},games:{},ach:{},daily:{last:null,streak:0,best:0,total:0},history:[],seen:{},points:0,perfect:0,last:null,progress:{},names:['Player 1','Player 2']};}
 function merge(d,o){if(o&&typeof o==='object'&&!Array.isArray(o)){for(const k in o){if(k==='__proto__'||k==='constructor')continue;if(d[k]&&typeof d[k]==='object'&&!Array.isArray(d[k])&&o[k]&&typeof o[k]==='object'&&!Array.isArray(o[k]))merge(d[k],o[k]);else d[k]=o[k];}}return d;}
 let S;let storageOK=true;
 function load(){try{const raw=localStorage.getItem(STORE_KEY);if(raw){const o=JSON.parse(raw);S=merge(defaults(),o);S.v=1;return;}}catch(e){storageOK=false;}S=defaults();}
@@ -238,6 +239,7 @@ BPA.show=function(node,nav){runLeave();BPA.keyHandler=null;const v=$('#view');v.
 BPA.setNav=function(nav){navCfg=Object.assign(navCfg,nav);updateNav();};
 function updateNav(){const set=(id,fn)=>{const b=$(id);b.disabled=!fn;};set('#nb-back',navCfg.back);set('#nb-restart',navCfg.restart);set('#nb-next',navCfg.next);$('#nb-home').disabled=!!navCfg.isHome;}
 $('#nb-home').addEventListener('click',()=>BPA.home());
+$('#nb-help').addEventListener('click',()=>BPA.help(navCfg.game||'home'));
 $('#nb-back').addEventListener('click',()=>navCfg.back&&navCfg.back());
 $('#nb-restart').addEventListener('click',()=>navCfg.restart&&navCfg.restart());
 $('#nb-next').addEventListener('click',()=>navCfg.next&&navCfg.next());
@@ -308,6 +310,56 @@ BPA.setLast=function(game,label){S.last={game,label,t:Date.now()};save();};
 BPA.diffBadge=d=>h('span',{class:'badge b'+d},['','Beginner','Intermediate','Expert'][d]);
 BPA.level=function(id,idx,total){/* progressive unlock */return S.settings.unlockAll||idx===0||!!G(id).done[idx-1+''];};
 
+
+/* ---------- how-to-play tutorials ---------- */
+const HELP={
+ home:{title:'Welcome to BrainPlay Arena',steps:[
+  ['🎮','Five brain games','Pick any game card and press Play. Each game has its own ❓ How to play guide — tap the ❓ button at the top at any time.'],
+  ['⭐','How scoring works','You earn points for solving. Wrong guesses and hints lower the score a little; efficient solutions earn a bonus. Speed alone never earns more, and replaying a level only adds points if you beat your best.'],
+  ['🌟','Daily challenge','A fresh puzzle each day. Missing a day never costs you points — your best streak is always kept.'],
+  ['🧘','Relaxed or Challenge','Settings lets you choose Relaxed (no timers) or Challenge (gentle timers — running out of time only removes the time bonus). You can also change theme, contrast and motion there.'],
+  ['🧭','Navigation','🏠 Home, ◀ Back, ↻ Restart and Next ▶ are always at the top. Your progress is saved on this device only.']]},
+ detective:{title:'How to play: Mystery Detective',steps:[
+  ['🕵️','Your mission','Something has been stolen. Every case has exactly one culprit who can be proved with logic — no guessing needed.'],
+  ['🔍','Inspect the evidence','Evidence cards start locked. Tap 🔍 Inspect on each one to read it. Read every card before you decide.'],
+  ['🧩','Five kinds of case','⏱ Alibi timeline: compare each person\'s records with the crime window — a gap means no alibi.\n🤥 Who is lying: only the guilty person\'s statement is false — test each suspect.\n🔎 Evidence match: cross out suspects whose profile does not fit.\n🔑 Access chain: the thief must be on EVERY list.\n🚪 Corridor logic: fit the witness reports to the room plan.'],
+  ['📌','Pin the key clues','Tap 📌 on the clues that prove your theory (up to 6). Pinning all the key clues without clutter earns a reasoning bonus.'],
+  ['⚖️','Accuse','Choose a suspect and press Accuse. A wrong guess costs a little score but tells you why that person is cleared. You have 3 hints, then you may reveal the solution (small credit).']]},
+ escape:{title:'How to play: Escape Room',steps:[
+  ['🗝️','Your mission','Escape the room by solving 3–5 linked stages. Each solved stage gives you a key digit that goes into your 🎒 inventory.'],
+  ['🔢','Puzzle types','Combination dials, a cipher wheel (shift letters back), a symbol ring (press symbols in order), number patterns, switch panels (obey every rule) and shelves (place objects using the clues).'],
+  ['🔗','Clues carry forward','Your newest key digit is used by the next stage — for example as a dial digit, a cipher shift or a starting symbol. Always check your inventory.'],
+  ['🚪','The exit door','The last stage is a keypad. Enter all your key digits in the order the door tells you (oldest first, or newest first).'],
+  ['💡','Hints and saving','Each stage has 3 progressive hints (the last reveals the answer). Wrong tries and hints lower the score slightly. Your adventure is saved automatically — use Resume to continue.']]},
+ shape:{title:'How to play: Shape Shifter',steps:[
+  ['🧩','Four level types','▣ Silhouette Fit: fill the whole shape. ◧ Mirror Maker: complete a symmetric pattern. ↻ Spin & Match: find which piece matches the silhouette. ▦ Pattern Matrix: find the rule and choose the missing piece.'],
+  ['👆','Placing pieces','Tap a piece in the tray to select it, then tap the board to place it. Or drag it with mouse or finger. Tap a placed piece to pick it up again. Green preview = it fits.'],
+  ['🔄','Rotate and flip','Use ⟲ ⟳ and ⇋ — or keys R (rotate), L (rotate left), F (flip). Pieces must often be turned before they fit.'],
+  ['🪞','Mirror Maker','Darker-bordered cells are fixed. Tap the other cells to fill them so the whole picture is symmetric, then press Check.'],
+  ['💡','Hints and timers','💡 shows where a piece goes (or which cell is wrong). In Challenge mode a timer gives a bonus — when it ends, nothing is lost. Solve a level to unlock the next.']]},
+ logic:{title:'How to play: Logic Machine',steps:[
+  ['⚡','Circuits','Tap the input switches (S1, S2…). Green wires carry signal. Make each lamp match its goal: lit where it says ON, dark where it says OFF. Gates: AND, OR, XOR, NAND, NOR, NOT.'],
+  ['🎚️','Lever banks','Each lever flips its own lamp — and secretly some others. Press levers to learn the wiring, then match the target row. Pressing a lever twice cancels it.'],
+  ['⛓️','Sequence machines','A part can only be switched when its "Needs…" conditions are met (green = met, red = not yet). Switching one part may force another. Find the right order.'],
+  ['🔬','Experiment','The move log and messages show cause and effect. Use ↺ Reset any time — in lever and sequence puzzles what you have learned is kept.'],
+  ['💡','Hints and par','Hints point to a useful switch or move. Solving in about the minimum number of moves ("par") earns an efficiency bonus.']]},
+ battle:{title:'How to play: Brain Battle',steps:[
+  ['⚔️','Two players, one device','Enter both names, choose Best of 3 or 5, and press Start. You may turn on optional 20-second timers.'],
+  ['🔁','Fair rounds','Each round has two questions in one category (pattern, logic, word, maths or visual). BOTH players answer the SAME questions. The player who goes first alternates each round.'],
+  ['🙈','Pass the device','After you answer, your result stays hidden. Hand the device over when the screen says so, then press Ready.'],
+  ['🏅','Scoring','The player with more correct answers wins the round; equal scores draw the round. First to the majority of rounds wins the match. If it is tied after the last round, tie-break rounds are played.'],
+  ['📜','Rematch and history','Rematch right away or change settings. Your recent match results are kept on this device.']]}
+};
+BPA.help=function(id){const H=HELP[id]||HELP.home;let i=0;BPA._lastFocus=document.activeElement;const root=$('#modal');
+  const draw=()=>{const st=H.steps[i];root.innerHTML='';
+    const box=h('div',{class:'modal-box',role:'dialog','aria-modal':'true','aria-label':H.title},h('h2',null,H.title),h('div',{class:'big-emo','aria-hidden':'true'},st[0]),h('p',{class:'mute'},'Step '+(i+1)+' of '+H.steps.length),
+      h('div',{id:'help-text'},st[2].split('\n').map(l=>h('p',null,l))),
+      h('div',{class:'modal-actions'},h('button',{class:'btn',id:'help-prev',disabled:i===0,onClick:()=>{i--;draw();}},'◀ Back'),
+        i<H.steps.length-1?h('button',{class:'btn primary',id:'help-next',onClick:()=>{i++;draw();}},'Next ▶'):h('button',{class:'btn primary',id:'help-done',onClick:closeModal},'Got it!'),
+        i<H.steps.length-1?h('button',{class:'btn ghost',id:'help-skip',onClick:closeModal},'Close'):null));
+    root.append(h('div',{class:'modal-back'},box));root.hidden=false;const f=$('.btn.primary',box);f&&f.focus();};
+  draw();};
+
 /* ---------- home ---------- */
 const GAMES=[
  {id:'detective',name:'Mystery Detective',emoji:'🕵️',desc:'30 case files of alibis, contradictions and clues. Inspect evidence, pin the key clues, name the culprit.',diff:3,cls:'g1'},
@@ -316,7 +368,7 @@ const GAMES=[
  {id:'logic',name:'Logic Machine',emoji:'⚙️',desc:'30 working machines of circuits, levers and sequences. Experiment, find the dependencies.',diff:3,cls:'g4'},
  {id:'battle',name:'Brain Battle',emoji:'⚔️',desc:'Two players, one device. Pattern, logic, word, maths and visual rounds. Best of 3 or 5.',diff:2,cls:'g5'}
 ];
-BPA.open=function(id,daily){BPA.ctx.daily=null;const g=BPA.games[id];if(!g)return toast('Game not available');g.open();};
+BPA.open=function(id,daily){BPA.ctx.daily=null;const g=BPA.games[id];if(!g)return toast('Game not available');g.open();if(!S.seen[id]){S.seen[id]=1;save();setTimeout(()=>BPA.help(id),200);}};
 BPA.home=function(){
   const dp=Daily.pick();const dg=GAMES.find(g=>g.id===dp.game);const done=Daily.isDone();
   const last=S.last&&BPA.games[S.last.game]?S.last:null;const lg=last&&GAMES.find(g=>g.id===last.game);
@@ -360,6 +412,7 @@ BPA.about=function(){BPA.show(h('div',null,h('h1',null,'ℹ️ About BrainPlay A
 function boot(){load();applySettings();Ach.check();BPA.home();}
 /* ===== Game 1: Mystery Detective ===== */
 (function(){
+const show=(n,o)=>BPA.show(n,Object.assign({game:'detective'},o));
 const PEOPLE=[['Asha','👩‍🎤'],['Ben','🧑‍🔧'],['Chloe','👩‍🔬'],['Dev','🧑‍🎨'],['Elena','👩‍🍳'],['Farid','🧔'],['Gia','👩‍🚀'],['Hugo','🧑‍🏫'],['Ivy','👧'],['Jon','🧑‍💼'],['Kira','🧑‍🎤'],['Leo','🧑‍🚒']];
 const FLAVORS=[
  {n:'Grand Museum',e:'🏛️',item:'the Jade Falcon',crime:'vanished from the Jade Gallery',scene:'Jade Gallery',places:['Café','Gift Shop','Library','Garden Court','Roof Terrace','Workshop','Cloakroom'],gates:[['Staff corridor door','Badge holders'],['Alarm panel','People who know the code'],['Display case lock','Key holders'],['Service lift','Authorised operators'],['Security office hatch','People with hatch access']]},
@@ -503,7 +556,7 @@ function menu(){BPA.ctx.daily=null;st.cur=null;let filter=0;
   const draw=()=>{tabs.innerHTML='';[['All',0],['Beginner',1],['Intermediate',2],['Expert',3]].forEach(([l,v])=>tabs.append(h('button',{class:'btn sm'+(filter===v?' sel':''),onClick:()=>{filter=v;draw();}},l)));
     tabs.append(h('button',{class:'btn sm primary',id:'det-random',onClick:()=>{const open=CASES.filter(c=>!G('detective').done[c.id]);const c=(open.length?open:CASES)[Math.floor(Math.random()*(open.length||CASES.length))];start(c);}},'🎲 Random case'));
     list.innerHTML='';CASES.filter(c=>!filter||c.diff===filter).forEach(c=>{const done=G('detective').done[c.id];list.append(h('button',{class:'card suspect','data-case':c.id,onClick:()=>start(c),style:{textAlign:'left'}},h('div',{class:'row sp'},h('b',null,FLAVORS[c.flavor].e+' #'+c.num+' '+c.title),done?h('span',{class:'chip ok'},'✓ '+G('detective').bestBy[c.id]):null),h('div',{class:'row'},BPA.diffBadge(c.diff),h('span',{class:'chip'},KINDS[c.kind]))));});};
-  draw();BPA.show(wrap,{back:BPA.home});}
+  draw();show(wrap,{back:BPA.home});}
 function start(c,seed,daily,resume){seed=seed||newSeed();BPA.ctx.daily=daily?daily:null;if(!resume)Score.play('detective');
   const d=buildCase(c,seed);st.cur={d,c,seed,inspected:new Set(),pinned:new Set(),hints:0,wrong:0,selected:null,revealed:false,done:false,eliminated:new Set()};
   BPA.setLast('detective','Case #'+c.num+' — '+c.title);S.progress.detective={caseId:c.id,seed};save();render();}
@@ -515,7 +568,7 @@ function render(){const s=st.cur,d=s.d,c=s.c,fl=d.fl;
     h('h2',{class:'sect'},'👥 Suspects'),h('div',{class:'grid g-2',id:'sus'}),
     h('div',{class:'row',style:{marginTop:'14px'}},h('button',{class:'btn primary',id:'det-accuse',onClick:accuse},'⚖️ Accuse selected suspect'),h('button',{class:'btn',id:'det-hint',onClick:hint},'💡 Hint'),h('button',{class:'btn ghost',id:'det-reveal',onClick:reveal,disabled:s.hints<3},'🏳️ Reveal solution')),
     h('div',{class:'fb',id:'det-fb','aria-live':'polite'}));
-  BPA.show(root,{back:()=>menu(),restart:()=>start(c,newSeed(),null),next:()=>nextCase()});
+  show(root,{back:()=>menu(),restart:()=>start(c,newSeed(),null),next:()=>nextCase()});
   drawClues();drawSus();drawTL();}
 function drawClues(){const s=st.cur,box=$('#clues');if(!box)return;box.innerHTML='';s.d.clues.forEach(cl=>{const open=s.inspected.has(cl.id),pin=s.pinned.has(cl.id);
   box.append(h('div',{class:'clue'+(open?' open':'')+(pin?' pin':''),'data-clue':cl.id},h('b',null,cl.title),
@@ -551,6 +604,7 @@ BPA.games.detective={open:menu,resume(){const p=S.progress.detective;const c=p&&
 })();
 /* ===== Game 2: Escape Room ===== */
 (function(){
+const show=(n,o)=>BPA.show(n,Object.assign({game:'escape'},o));
 const THEMES={
  library:{n:'The Haunted Library',e:'📚',props:'🕯️',propN:'candles',words:['GHOST','ORACLE','SCROLL','MOON','RAVEN','SHADOW'],objs:[['📖','Spellbook'],['🕰️','Clock'],['🔦','Lantern'],['🪶','Quill'],['🗝️','Key']],syms:['🌙','⭐','🔮','🦉','📜']},
  pirate:{n:'Pirate Cove',e:'🏴‍☠️',props:'💰',propN:'gold coins',words:['ANCHOR','PARROT','KRAKEN','CUTLASS','MAP','SAILOR'],objs:[['🧭','Compass'],['💎','Gem'],['🦜','Parrot'],['🗡️','Dagger'],['⚓','Anchor']],syms:['⚓','🦜','💀','🌴','🧭']},
@@ -650,7 +704,7 @@ function menu(){BPA.ctx.daily=null;st.cur=null;const p=S.progress.escape;const p
     pa&&!p.done?h('div',{class:'card',style:{marginBottom:'12px'}},h('b',null,'In progress: '+THEMES[pa.th].e+' '+THEMES[pa.th].n+' — stage '+(p.idx+1)+'/'+pa.total),h('div',{class:'row',style:{marginTop:'8px'}},h('button',{class:'btn primary',id:'esc-resume',onClick:()=>resume()},'▶ Resume'))):null,
     h('div',{class:'grid g-games'},ADV.map(a=>{const th=THEMES[a.th];const done=G('escape').done[a.id];return h('div',{class:'card'},h('h3',null,th.e+' #'+a.num+' '+th.n),h('div',{class:'row'},BPA.diffBadge(a.diff),h('span',{class:'chip'},a.total+' stages'),done?h('span',{class:'chip ok'},'✓ best '+G('escape').bestBy[a.id]):null),
       h('div',{class:'row',style:{marginTop:'8px'}},h('button',{class:'btn primary','data-adv':a.id,onClick:()=>begin(a)},'▶ Play'),pa&&pa.adv===a.id&&!p.done?h('button',{class:'btn',onClick:resume},'Resume'):null));})));
-  BPA.show(root,{back:BPA.home});}
+  show(root,{back:BPA.home});}
 function begin(a,seed,daily){const go=()=>{BPA.ctx.daily=daily||null;Score.play('escape');launch(a,seed||newSeed(),0,[0],0,false);};
   const p=S.progress.escape;if(p&&!p.done&&p.adv!==a.id&&!daily)BPA.confirm('Starting a new adventure replaces your saved progress in the current one. Continue?',go);else go();}
 function launch(adv,seed,idx,hl,wrong){const b=buildAdventure(adv,seed);const n=b.stages.length;st.cur={adv,th:b.th,seed,stages:b.stages,idx,hl:(hl&&hl.length===n)?hl:Array(n).fill(0),wrong:wrong||0,done:false,solvedIdx:-1,startIdx:idx};
@@ -662,7 +716,7 @@ function render(){const s=st.cur,stg=s.stages[s.idx],th=s.th;
   const root=h('div',null,h('h1',null,th.e+' '+th.n),h('div',{class:'row'},h('span',{class:'chip'},'Stage '+(s.idx+1)+' / '+s.stages.length),h('span',{class:'chip'},'Hints used: '+totalHints())),inv,
     h('div',{class:'card'},h('h2',null,(stg.type==='final'?'🚪 ':'🔧 ')+stg.title),h('p',null,stg.desc),h('div',{id:'esc-stage'}),h('div',{class:'fb',id:'esc-fb','aria-live':'polite'}),
       h('div',{class:'row'},h('button',{class:'btn',id:'esc-hint',onClick:hint},'💡 Hint ('+s.hl[s.idx]+'/3)'),h('button',{class:'btn primary',id:'esc-check',onClick:()=>checkStage()},stg.type==='final'?'🔓 Try the code':'✔ Check'))));
-  BPA.show(root,{back:()=>{saveProg();menu();},restart:()=>{BPA.confirm('Restart this adventure with new numbers?',()=>{S.progress.escape=null;begin(s.adv,newSeed(),BPA.ctx.daily);});},next:null});
+  show(root,{back:()=>{saveProg();menu();},restart:()=>{BPA.confirm('Restart this adventure with new numbers?',()=>{S.progress.escape=null;begin(s.adv,newSeed(),BPA.ctx.daily);});},next:null});
   mount(stg);}
 const U={};
 function mount(stg){const box=$('#esc-stage');U.get=null;U.clear=null;U.pre=null;const th=st.cur.th;
@@ -706,6 +760,7 @@ BPA.games.escape={open:menu,resume,startDaily(pick){begin(ADV[pick.seed%10],pick
 })();
 /* ===== Game 3: Shape Shifter ===== */
 (function(){
+const show=(n,o)=>BPA.show(n,Object.assign({game:'shape'},o));
 const PAL=['#7c5cff','#00b8e6','#ff5fa8','#7fc41a','#ffb020','#ff7b54','#2fd3a0','#c084fc'];
 const D4=[[1,0],[-1,0],[0,1],[0,-1]];
 const norm=cells=>{let mr=1e9,mc=1e9;cells.forEach(([r,c])=>{mr=Math.min(mr,r);mc=Math.min(mc,c);});return cells.map(([r,c])=>[r-mr,c-mc]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]);};
@@ -778,13 +833,13 @@ const st={cur:null,lastIdx:0};const CS=40;
 const tierOf=i=>Math.floor(i/4);const diffOf=i=>{const t=tierOf(i);return t<3?1:t<6?2:3;};
 function menu(){BPA.ctx.daily=null;st.cur=null;const grid=h('div',{class:'lvgrid'});
   for(let i=0;i<30;i++){const done=G('shape').done[String(i)];const open=BPA.level('shape',i);grid.append(h('button',{class:'btn lv'+(done?' sel':''),'data-level':i,disabled:!open,'aria-label':'Level '+(i+1)+' '+TNAME[TYPES[i%4]]+(done?' completed':open?'':' locked'),onClick:()=>play(i)},String(i+1),h('small',null,done?'✓':open?['▣','◧','↻','▦'][i%4]:'🔒')));}
-  BPA.show(h('div',null,h('h1',null,'🧩 Shape Shifter'),h('p',{class:'mute'},'30 spatial levels. Select a piece, rotate or flip it, then tap (or drag) it onto the board. Level types: ▣ Silhouette Fit, ◧ Mirror Maker, ↻ Spin & Match, ▦ Pattern Matrix. Solve a level to unlock the next.'),grid),{back:BPA.home});}
+  show(h('div',null,h('h1',null,'🧩 Shape Shifter'),h('p',{class:'mute'},'30 spatial levels. Select a piece, rotate or flip it, then tap (or drag) it onto the board. Level types: ▣ Silhouette Fit, ◧ Mirror Maker, ↻ Spin & Match, ▦ Pattern Matrix. Solve a level to unlock the next.'),grid),{back:BPA.home});}
 function play(i,daily,resume){BPA.ctx.daily=daily||null;if(!resume)Score.play('shape');const lv=GEN[TYPES[i%4]](i);
   st.cur={i,lv,sel:null,moves:0,hints:0,wrong:0,ghost:null,done:false,timer:null,hintCells:null};st.lastIdx=i;BPA.setLast('shape','Level '+(i+1)+' — '+TNAME[TYPES[i%4]]);S.progress.shape={level:i};save();render();}
 function nextLevel(){const s=st.cur;if(!s)return;const n=s.i+1;if(n>=30){toast('That was the last level — well done!');return menu();}if(!BPA.level('shape',n)){toast('Solve this level to unlock the next one.');return;}play(n);}
 function render(){const s=st.cur,lv=s.lv,i=s.i;const root=h('div',null,h('h1',null,'Level '+(i+1)+': '+TNAME[lv.type]),h('div',{class:'row'},BPA.diffBadge(diffOf(i)),h('span',{class:'chip',id:'sh-moves'},'Moves: 0'),h('span',{class:'chip',id:'sh-hints'},'Hints: 0'),h('span',{id:'sh-timer'})),
     h('p',{class:'mute',id:'sh-goal'}),h('div',{class:'play two',id:'sh-play'}),h('div',{class:'fb',id:'sh-fb','aria-live':'polite'}));
-  BPA.show(root,{back:menu,restart:()=>play(i,BPA.ctx.daily),next:()=>nextLevel()});
+  show(root,{back:menu,restart:()=>play(i,BPA.ctx.daily),next:()=>nextLevel()});
   if(isChallenge()){const secs=[90,120,100,150][i%4]+tierOf(i)*15;s.timer=BPA.makeTimer($('#sh-timer'),secs,()=>fb('⏱ Time is up — no penalty. Keep going; only the time bonus is gone.',true));}
   ({tile:renderTile,orient:renderTile,sym:renderSym,matrix:renderMatrix})[lv.type]();
   BPA.keyHandler=e=>{const k=e.key.toLowerCase();if(lv.type==='tile'||lv.type==='orient'){if(k==='r')xform('rot');else if(k==='f')xform('flip');else if(k==='l')xform('rotL');else if(k==='escape'){s.sel=null;renderTile();}}};}
@@ -859,6 +914,7 @@ BPA.games.shape={open:menu,resume(){const l=S.progress.shape?S.progress.shape.le
 })();
 /* ===== Game 4: Logic Machine ===== */
 (function(){
+const show=(n,o)=>BPA.show(n,Object.assign({game:'logic'},o));
 const FAM=['circuit','levers','sequence'];const FNAME={circuit:'Circuit',levers:'Lever Bank',sequence:'Sequence Machine'};const FICON={circuit:'⚡',levers:'🎚️',sequence:'⛓️'};
 const pc=m=>{let c=0;while(m){c+=m&1;m>>=1;}return c;};
 /* ---- circuit ---- */
@@ -908,14 +964,14 @@ BPA.logicGen=i=>GEN[FAM[i%3]](i);BPA.logicSeq={seqStep,seqBfs};
 const st={cur:null};const diffOf=i=>{const d=Math.floor(i/3);return d<3?1:d<7?2:3;};
 function menu(){BPA.ctx.daily=null;st.cur=null;const grid=h('div',{class:'lvgrid'});
   for(let i=0;i<30;i++){const done=G('logic').done[String(i)];const open=BPA.level('logic',i);grid.append(h('button',{class:'btn lv'+(done?' sel':''),'data-level':i,disabled:!open,'aria-label':'Puzzle '+(i+1)+' '+FNAME[FAM[i%3]]+(done?' solved':open?'':' locked'),onClick:()=>play(i)},String(i+1),h('small',null,done?'✓':open?FICON[FAM[i%3]]:'🔒')));}
-  BPA.show(h('div',null,h('h1',null,'⚙️ Logic Machine'),h('p',{class:'mute'},'30 machines: ⚡ circuits (set the switches so the right lamps light), 🎚️ lever banks (levers secretly toggle others) and ⛓️ sequence machines (parts only move when their conditions are met). Solve one to unlock the next.'),grid),{back:BPA.home});}
+  show(h('div',null,h('h1',null,'⚙️ Logic Machine'),h('p',{class:'mute'},'30 machines: ⚡ circuits (set the switches so the right lamps light), 🎚️ lever banks (levers secretly toggle others) and ⛓️ sequence machines (parts only move when their conditions are met). Solve one to unlock the next.'),grid),{back:BPA.home});}
 function play(i,daily,resume){BPA.ctx.daily=daily||null;if(!resume)Score.play('logic');const L=GEN[FAM[i%3]](i);
   st.cur={i,L,moves:0,hints:0,wrong:0,done:false,timer:null,cur:L.type==='circuit'?0:L.type==='levers'?L.start:0,known:{},log:[],flash:new Set(),hintTarget:null};
   BPA.setLast('logic','Puzzle '+(i+1)+' — '+FNAME[FAM[i%3]]);S.progress.logic={level:i};save();render();}
 function nextLevel(){const s=st.cur;if(!s)return;const n=s.i+1;if(n>=30){toast('That was the last puzzle — brilliant!');return menu();}if(!BPA.level('logic',n)){toast('Solve this puzzle to unlock the next one.');return;}play(n);}
 function render(){const s=st.cur,i=s.i,L=s.L;const root=h('div',null,h('h1',null,'Puzzle '+(i+1)+': '+FNAME[L.type===('circuit')?'circuit':L.type]),h('div',{class:'row'},BPA.diffBadge(diffOf(i)),h('span',{class:'chip',id:'lg-moves'},'Moves: 0'),h('span',{class:'chip',id:'lg-hints'},'Hints: 0'),h('span',{id:'lg-timer'})),
    h('p',{class:'mute',id:'lg-goal'}),h('div',{id:'lg-main'}),h('div',{class:'row',style:{marginTop:'10px'}},h('button',{class:'btn',id:'lg-hint',onClick:hint},'💡 Hint'),h('button',{class:'btn',id:'lg-reset',onClick:reset},'↺ Reset')),h('div',{class:'fb',id:'lg-fb','aria-live':'polite'}),h('ol',{class:'log',id:'lg-log'}));
-  BPA.show(root,{back:menu,restart:()=>play(i,BPA.ctx.daily),next:()=>nextLevel()});
+  show(root,{back:menu,restart:()=>play(i,BPA.ctx.daily),next:()=>nextLevel()});
   if(isChallenge()){s.timer=BPA.makeTimer($('#lg-timer'),60+Math.floor(i/3)*20+30,()=>fb('⏱ Time is up — no penalty. Only the time bonus is gone.',true));}
   draw();}
 function fb(m,ok){const e=$('#lg-fb');if(e){e.textContent=m;e.className='fb '+(ok?'ok':'bad');}}
@@ -975,6 +1031,7 @@ BPA.games.logic={open:menu,resume(){const l=S.progress.logic?S.progress.logic.le
 })();
 /* ===== Game 5: Brain Battle (two players, one device) ===== */
 (function(){
+const show=(n,o)=>BPA.show(n,Object.assign({game:'battle'},o));
 const CATS=[{id:'pattern',n:'Pattern Recognition',e:'🔢'},{id:'logic',n:'Logical Deduction',e:'🧠'},{id:'word',n:'Word Challenge',e:'🔤'},{id:'math',n:'Mental Arithmetic',e:'➕'},{id:'visual',n:'Visual Puzzle',e:'👁️'}];
 const WORDS=['planet','garden','rocket','pencil','castle','bridge','jungle','mirror','window','silver','dragon','forest','island','guitar','puzzle','thunder','whisper','monkey','pirate','magnet'];
 const SETS=[['Apple','Mango','Grape','Peach','Lemon'],['Tiger','Zebra','Eagle','Whale','Panda'],['Mars','Venus','Saturn','Neptune','Mercury'],['Piano','Violin','Drums','Flute','Guitar'],['Chess','Ludo','Poker','Carrom','Bingo'],['Paris','Cairo','Tokyo','Lima','Delhi']];
@@ -1012,7 +1069,7 @@ const st={m:null,setup:{N:3,timer:false}};
 function setup(){BPA.ctx.daily=null;st.m=null;const n1=h('input',{type:'text',id:'bt-n1',maxlength:14,'aria-label':'Player 1 name',value:S.names[0]}),n2=h('input',{type:'text',id:'bt-n2',maxlength:14,'aria-label':'Player 2 name',value:S.names[1]});
   const ns=h('select',{id:'bt-n','aria-label':'Match length'},[3,5].map(v=>{const o=h('option',{value:v},'Best of '+v);if(st.setup.N===v)o.selected=true;return o;}));const tm=h('input',{type:'checkbox',id:'bt-timer','aria-label':'Use question timers'});tm.checked=st.setup.timer;
   const hist=S.history.slice(0,6);
-  BPA.show(h('div',null,h('h1',null,'⚔️ Brain Battle'),h('p',{class:'mute'},'Two players, one device. Each round has two questions in one category. Both players answer the same questions — alternating who goes first — and answers stay hidden until both are done. Most correct answers wins the round.'),
+  show(h('div',null,h('h1',null,'⚔️ Brain Battle'),h('p',{class:'mute'},'Two players, one device. Each round has two questions in one category. Both players answer the same questions — alternating who goes first — and answers stay hidden until both are done. Most correct answers wins the round.'),
     h('div',{class:'card'},h('div',{class:'field'},h('label',{for:'bt-n1'},'Player 1'),n1),h('div',{class:'field'},h('label',{for:'bt-n2'},'Player 2'),n2),h('div',{class:'field'},h('label',{for:'bt-n'},'Match length'),ns),
       h('div',{class:'field'},h('div',null,h('b',null,'Question timers (20 s)'),h('div',{class:'mute'},'Off by default. If time runs out, that question counts as unanswered.')),tm),
       h('button',{class:'btn primary',id:'bt-start',style:{marginTop:'12px'},onClick:()=>{S.names=[(n1.value.trim()||'Player 1').slice(0,14),(n2.value.trim()||'Player 2').slice(0,14)];if(S.names[0]===S.names[1])S.names[1]+=' 2';st.setup.N=+ns.value;st.setup.timer=tm.checked;save();startMatch();}},'▶ Start match')),
@@ -1023,7 +1080,7 @@ function nextRound(){const m=st.m;const catId=m.cats[m.round%5];const rng=Rng(ne
 const score=m=>h('div',{class:'score'},[0,1].map(p=>h('div',{class:'p'+(m.cur&&m.cur.order[m.cur.step]===p&&m.phase==='q'?' turn':'')},h('div',{class:'mute'},m.names[p]),h('div',{style:{fontSize:'2rem',fontWeight:800}},m.wins[p]),h('div',{class:'mute'},'rounds won'))));
 function navs(extra){return Object.assign({back:()=>BPA.confirm('Leave this match? Its progress will be lost.',setup),restart:()=>BPA.confirm('Restart the match from round 1?',()=>startMatch())},extra||{});}
 function handoff(){const m=st.m,c=m.cur;m.phase='h';const p=c.order[c.step];const first=c.step===0;
-  BPA.show(h('div',null,h('h1',null,'Round '+(m.round+1)+(m.round>=m.N?' (tie-break)':'')+' — '+c.cat.e+' '+c.cat.n),score(m),
+  show(h('div',null,h('h1',null,'Round '+(m.round+1)+(m.round>=m.N?' (tie-break)':'')+' — '+c.cat.e+' '+c.cat.n),score(m),
     h('div',{class:'card',style:{textAlign:'center',marginTop:'14px'}},h('div',{class:'big-emo'},p===0?'🟣':'🟠'),h('h2',{id:'bt-turn'},m.names[p]+', you are up!'),h('p',{class:'mute'},first?'You answer first this round. Same questions for both players.':'Same questions as '+m.names[c.order[0]]+' had — answers are still hidden.'),h('p',{class:'mute'},'Best of '+m.N+' — first to '+m.rtw+' rounds wins. Pass the device to '+m.names[p]+' and press Ready.'),
       h('button',{class:'btn primary',id:'bt-ready',onClick:()=>question()},'✔ Ready'))),navs());}
 function question(){const m=st.m,c=m.cur;m.phase='q';const p=c.order[c.step];const q=c.qs[c.qi];
@@ -1031,7 +1088,7 @@ function question(){const m=st.m,c=m.cur;m.phase='q';const p=c.order[c.step];con
     h('div',{class:'card',style:{marginTop:'8px'}},h('div',{class:'bq',id:'bt-q'},q.prompt),q.display?h('div',{class:'oddgrid',style:{fontSize:'1.6rem',gridTemplateColumns:'repeat(5,1fr)',textAlign:'center'}},q.display.map(x=>h('span',null,x))):null,
       q.kind==='grid'?h('div',{class:'oddgrid'},q.cells.map((x,i)=>h('button',{class:'btn','data-cell':i,'aria-label':'Tile '+(i+1),onClick:()=>answer(i)},x))):h('div',{class:'bopts'},q.options.map((o,i)=>h('button',{class:'btn','data-opt':i,onClick:()=>answer(i)},o)))),
     h('p',{class:'mute'},'Your answer is locked in when you tap — correctness stays hidden until both players have answered.'));
-  BPA.show(root,navs());
+  show(root,navs());
   let live=true;BPA.onLeave(()=>{live=false;});
   if(m.timer){const t=BPA.makeTimer($('#bt-tm'),20,()=>setTimeout(()=>{if(live)answer(null);},400));}}
 let busy=false;
@@ -1046,12 +1103,12 @@ function reveal(){const m=st.m,c=m.cur;m.phase='r';const cor=[0,1].map(p=>c.qs.f
   const rows=c.qs.map((q,k)=>h('div',{class:'card',style:{marginBottom:'8px'}},h('b',null,'Q'+(k+1)+': '+q.prompt),h('p',null,'✅ Correct: ',h('b',null,ansText(q,q.answer))),
     h('p',null,[0,1].map(p=>h('span',{class:'chip'+(c.ans[p][k]===q.answer?' ok':''),style:{marginRight:'6px'}},m.names[p]+': '+ansText(q,c.ans[p][k])+(c.ans[p][k]===q.answer?' ✓':' ✗')))),h('p',{class:'mute'},q.explain)));
   const res=rw>=0?'🏅 '+m.names[rw]+' wins the round ('+cor[rw]+'–'+cor[1-rw]+')':'🤝 Round drawn ('+cor[0]+'–'+cor[1]+')';
-  BPA.show(h('div',null,h('h1',null,'Round '+m.round+' result'),score(m),h('h2',{id:'bt-roundres',style:{textAlign:'center'}},res),rows,
+  show(h('div',null,h('h1',null,'Round '+m.round+' result'),score(m),h('h2',{id:'bt-roundres',style:{textAlign:'center'}},res),rows,
     h('button',{class:'btn primary',id:'bt-next',onClick:()=>decided?finish():nextRound()},decided?'🏆 See match result':'Next round ▶')),navs({next:()=>decided?finish():nextRound()}));}
 function finish(){const m=st.m;m.done=true;m.phase='f';const winner=m.wins[0]>m.wins[1]?0:m.wins[1]>m.wins[0]?1:-1;
   S.history.unshift({t:Date.now(),names:m.names.slice(),wins:m.wins.slice(),winner,N:m.N});S.history=S.history.slice(0,20);
   Score.raw('battle','m'+Date.now(),30);
-  BPA.show(h('div',null,h('h1',null,'Match result'),score(m),h('div',{class:'card',style:{textAlign:'center'}},h('div',{class:'big-emo'},winner<0?'🤝':'🏆'),h('h2',{id:'bt-winner'},winner<0?'It is a draw — perfectly matched!':m.names[winner]+' wins the match!'),h('p',{class:'mute'},m.names[0]+' '+m.wins[0]+' – '+m.wins[1]+' '+m.names[1]+(m.draws?' ('+m.draws+' drawn round'+(m.draws>1?'s':'')+')':''))),
+  show(h('div',null,h('h1',null,'Match result'),score(m),h('div',{class:'card',style:{textAlign:'center'}},h('div',{class:'big-emo'},winner<0?'🤝':'🏆'),h('h2',{id:'bt-winner'},winner<0?'It is a draw — perfectly matched!':m.names[winner]+' wins the match!'),h('p',{class:'mute'},m.names[0]+' '+m.wins[0]+' – '+m.wins[1]+' '+m.names[1]+(m.draws?' ('+m.draws+' drawn round'+(m.draws>1?'s':'')+')':''))),
     h('div',{class:'card',style:{marginTop:'10px'}},h('h3',null,'Rounds'),m.rounds.map((r,i)=>h('p',null,'Round '+(i+1)+' — '+CATS.find(c=>c.id===r.cat).e+' '+CATS.find(c=>c.id===r.cat).n+': '+m.names[0]+' '+r.cor[0]+' / '+m.names[1]+' '+r.cor[1]+' → '+(r.winner<0?'draw':m.names[r.winner])))),
     h('div',{class:'row',style:{marginTop:'12px'}},h('button',{class:'btn primary',id:'bt-rematch',onClick:()=>startMatch()},'↻ Rematch'),h('button',{class:'btn',id:'bt-setup',onClick:setup},'Change settings'),h('button',{class:'btn',onClick:BPA.home},'🏠 Home'))),{back:setup,restart:()=>startMatch()});}
 BPA.games.battle={open:setup,resume:setup,get state(){return st.m;},CATS};
