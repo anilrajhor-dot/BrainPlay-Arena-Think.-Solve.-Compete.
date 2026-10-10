@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="author" content="Anil Sharma, Former General Manager, Central Bank of India">
 <meta name="color-scheme" content="dark light">
 <title>BrainPlay Arena — Think. Solve. Compete.</title>
 <style>
@@ -337,7 +338,7 @@ BPA.home=function(){
      h('tbody',null,GAMES.map(g=>{const s=G(g.id);return h('tr',null,h('td',null,g.emoji+' '+g.name),h('td',null,s.plays),h('td',null,s.solved),h('td',null,s.best),h('td',null,s.points),h('td',null,s.attempts?Math.round(100*s.correct/s.attempts)+'%':'—'));})))),
    h('h2',{class:'sect'},'🏆 Achievements ('+ACH.filter(a=>S.ach[a[0]]).length+'/'+ACH.length+')'),
    h('div',{class:'grid g-2'},ACH.map(a=>h('div',{class:'ach'+(S.ach[a[0]]?'':' locked')},h('div',{class:'ic'},S.ach[a[0]]?a[1]:'🔒'),h('div',null,h('b',null,a[2]),h('small',null,a[3]))))),
-   h('div',{class:'row',style:{marginTop:'24px'}},h('button',{class:'btn',id:'btn-settings',onClick:BPA.settings},'⚙️ Settings'),h('button',{class:'btn',id:'btn-about',onClick:BPA.about},'ℹ️ About')));
+   h('div',{class:'row',style:{marginTop:'24px'}},h('button',{class:'btn',id:'btn-settings',onClick:BPA.settings},'⚙️ Settings'),h('button',{class:'btn',id:'btn-about',onClick:BPA.about},'ℹ️ About'),h('p',{class:'mute',id:'credit',style:{marginTop:'28px',textAlign:'center'}},'Developed by ',h('b',null,'Anil Sharma'),' — Former General Manager, Central Bank of India')));
   BPA.show(root,{isHome:true});
 };
 BPA.settings=function(){
@@ -355,7 +356,7 @@ BPA.about=function(){BPA.show(h('div',null,h('h1',null,'ℹ️ About BrainPlay A
   h('p',null,'BrainPlay Arena v'+BPA.version+' is a single-file brain-games collection: Mystery Detective, Escape Room, Shape Shifter, Logic Machine and Brain Battle.'),
   h('p',null,'Everything runs on your device. There are no accounts, no analytics and no network requests — progress is stored only in your browser\'s local storage, so it also works offline.'),
   h('p',null,'Scoring rewards careful thinking: wrong guesses and hints reduce the base score, efficient solutions earn bonuses, and speed alone never does. Replays never inflate your total — only beating your best adds points.'),
-  h('p',{class:'mute'},'Tips: use Tab/Enter or tap to play everywhere. In Shape Shifter press R to rotate and F to flip the selected piece.'))),{back:BPA.home});};
+  h('p',null,h('b',null,'Developed by Anil Sharma'),', Former General Manager, Central Bank of India.'),h('p',{class:'mute'},'Tips: use Tab/Enter or tap to play everywhere. In Shape Shifter press R to rotate and F to flip the selected piece.'))),{back:BPA.home});};
 function boot(){load();applySettings();Ach.check();BPA.home();}
 /* ===== Game 1: Mystery Detective ===== */
 (function(){
